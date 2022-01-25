@@ -1,82 +1,105 @@
-window.onload = () => {
+// récupération de l'id du produit dans l'URL
+function recupProductId() {
+  let params = new URL(window.location.href).searchParams;
+  return params.get('id');
+}
 
-  // Récupération de l'adresse de la page index.html avec window.location.href
-  const recupUrl = window.location.href;
+//récuperation des détails du produits sélèctionné 
+function productDetail(productId) {
+  fetch("http://localhost:3000/api/products/" + productId)
+    .then(res => res.json())
+    .then(product => {
+      
+      let image = document.getElementsByClassName('item__img')
+      image[0].innerHTML = `<img src="${product.imageUrl}" alt=${product.altTxt}">`;
+      imageURL = product.imageUrl;
+      imageAlt = product.altTxt;
+      document.getElementById('title').innerHTML = `<h1>${product.name}</h1>`;
+      document.getElementById('price').innerHTML = `${product.price}`;
+      document.getElementById('description').innerHTML = `${product.description}`;
 
-  // Récupération de l'ID avec urlSearchParams
-  const recupId = window.location.search;
-  const urlSearchParams = new URLSearchParams(recupId);
-  const id = urlSearchParams.get('id')
+      // choix des couleurs
 
-  // Récupération des ressources de l'api avec l'id du produit
-  const productsId = fetch('http://localhost:3000/api/products/' + id)
-  productsId.then(async (responseData) => {
+      for (number in product.colors) {
+        colors.options[colors.options.length] = new Option(product.colors[number]);
+      }
+    })
+    .catch((error) => {
+      console.error({ "error": error })
+    })
+}
+ 
 
-    const product = await responseData.json();
 
-    // Affichage des détails du produit sélectionné
-    document.getElementById("addToCart");
-    document.getElementById("price").innerHTML = product.price;
-    document.getElementById("title").innerHTML = product.name;
-    document.getElementById("description").innerHTML = product.description;
-    let img = document.createElement("img");
-    img.src = product.imageUrl;
-    img.alt = product.altTxt;
-    document.querySelector(".item__img").appendChild(img);
-
-    // Gestion des couleurs. je creer une boucle pour l'affichage des couleurs 
-    for (color in product.colors) {
-      colors.options[colors.options.length] = new Option(product.colors[color]);
-    }
-    // panier.
-    // //Je créer des constantes pour le choix de l'utilisateur
-    let productColors = document.getElementById("color");
-    let imageURL = "imageURL";
-    let altTxt = "altTxt";
-    let quantities = Number(quantity.value);
-
-    console.log(color)
-
-    // évenement pour le bouton ajouter au panier
-   let addToCart = document.getElementById('addToCart').addEventListener("click", (event) => {
+  //  ajout au panier
+  function addCart() {
+  // mise en place des variables
+  const choiceQuantity = document.getElementById('quantity');
+  const choiceColors = document.getElementById('colors');
+  const addToCart = document.getElementById('addToCart');
+  let imageURL = "";
+  let altTxt = "";
+    addToCart.addEventListener('click', (event) => {
       event.preventDefault();
-      // Valeurs du produit récupérées à stockées dans un tabeau.
-      const productInfo = {
-        id,
-        name,
-        imageURL,
-        altTxt,
-        colors,
-        quantities,
+
+      const details = {
+        id: productId,
+        image: imageURL,
+        name: title.textContent,
+        color: choiceColors.value,
+        quantity: choiceQuantity.value,
+
       };
 
-      // tableau pour récuperer les données 
-      let saveProducts = [];
+      // je met clés+valeurs dans le localStorage
+      let productInLocalStorage = JSON.parse(localStorage.getItem('product'));
 
-      // condition pour vérifier que le tableau n'a pas de produit enregistrer
-      if (localStorage.getItem("product")) {
-        // si le tableau contient des donnés, elle sont transferées dans le tableau
-        saveProducts = JSON.parse(localStorage.getItem("product"));
+      //j'ajoute les produits choisis dans le localstorage
+      const addInLocalStorage = () => {
 
-        // vérification qu'il n y as pas de produit avec le meme id et la meme couleur
-        let kanap = saveProducts.findIndex((object => object.id === productInfo.id && productInfo.color === object.color));
-
-        // si il y as déjà un produit identique alors la quantité est modifiée
-        if (kanap !== 0) {
-          saveProducts[kanap].quantities += quantities;
-        }
-        // si ce n'est pas le cas alors le produit est ajouté au tableau
-        else if (kanap === 0) {
-        }
-        // les produits du tableau du localStorage et sont convertis en chaine de caractères
-        localStorage.setItem("product", JSON.stringify(saveProducts));
+        //je récupère le choix du client et les données du localstorage
+        productInLocalStorage.push(details);
+        localStorage.setItem('product', JSON.stringify(productInLocalStorage));
       }
 
-      // sinon si le localStorage est vide, les données son envoyées avec un tableau et les convertis 
+      const addConfirm = () => {
+        alert('Votre produit a bien été ajouté');
+      }
+          // alert('veuillez sélectionnez une quantité ou/et une couleur ')
+
+      let update = false;
+
+      //Verification qu'il n'y a pas les mêmes produits avec une boucle
+      if (productInLocalStorage) {
+        productInLocalStorage.forEach(function (productconfirmation, key) {
+          if (productconfirmation.id === productId && productconfirmation.color === choiceColors.value) {
+            productInLocalStorage[key].quantity = parseInt(productconfirmation.quantity) + parseInt(choiceQuantity.value);
+            localStorage.setItem('product', JSON.stringify(productInLocalStorage));
+            update = true;
+            addConfirm();
+          }
+        });
+
+        if (!update) {
+          addInLocalStorage();
+          addConfirm();
+        }
+      }
+
       else {
-        saveProducts.push(productInfo);
-        localStorage.setItem("product", JSON.stringify(saveProducts));
+        productInLocalStorage = [];
+        addInLocalStorage();
+        addConfirm();
       }
     });
-  });
+  }
+
+
+
+window.onload = () => {
+  recupProductId();
+  let bidon = recupProductId();_
+   // fonction qui répete la fonction çi-dessus pour ne pas ré-écrire le code
+  productDetail(bidon);
+  addCart();
 }
