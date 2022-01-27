@@ -26,26 +26,43 @@ function showProductDetails(productId) {
 }
 
 
-// faire indentation nikel
-// ajouter l'evenement au click sur le btn ajouter au panier
-// =>> window.onload
-// verifier que la couleur est selectionné 
-// verifier que la quantité soit selectionnées
-// si oui 
-// recuperer le localstorage
-// verifier si le produit et deja dans la panier 
-// si oui 
-// modifier la quantitée
-// sinon
-// ajouter le produit dans le panier
+  // FAIRE UNE INDENTATION NIKEL
+  //FAIRE LE ADDCART
+  // recuperer le localstorage
+  // verifier si le produit et deja dans la panier 
+  // si oui 
+  // modifier la quantitée
+  // sinon
+  // ajouter le produit dans le panier
 
+// "";
+// '';
+// );
+// nomdevariable;
+// ];
 
-//ajoutez les produits au panier
-function addCart() {
-  // mise en place des variables
-  let choiceQuantity = document.getElementById('quantity');
-  let choiceColors = document.getElementById('colors');
-  let imageURL = "";
+  // Verification si la quantité et la couleur sont sélectionner
+function validSelect() {
+  let choiceColor = document.getElementById('colors');
+  let quantity = document.getElementById('quantity') ;
+    if (choiceColor.value === '') {
+      window.alert('veuillez sélectionner une couleur')
+     return false;
+    } 
+    if (quantity.value == 0) {
+      window.alert('Veuillez sélectionner une quantité du produit')
+      return false;
+    }
+    
+   return true;
+  }
+  //ajoutez les produits au panier
+  function addCart() {
+    // mise en place des variables
+    let addToCart = document.getElementById('addToCart');
+    let choiceQuantity = document.getElementById('quantity');
+    let choiceColors = document.getElementById('colors');
+    let imageURL = "";
 
     let details = {
       id: getProductId(),
@@ -55,8 +72,9 @@ function addCart() {
       quantity: choiceQuantity.value,
 
     };
+
+
     // if (colors === ''){
-    //   window.alert('veuillez sélectionner au moins une couleur')
     // }
 
     // je met clés+valeurs dans le localStorage
@@ -104,15 +122,25 @@ function addCart() {
 
 
 
-  window.onload = () => {
+window.onload = () => {
+  
+  // Appel de la fonction de récuperation de l'id du produit
+  let productId = getProductId();
+ 
+  // Appel de la fonction qui répete la fonction çi-dessus pour ne pas ré-écrire le code
+  showProductDetails(productId);
+  
+  // Evenement au clic pour l'ajout au panier
+  document.querySelector('#addToCart').addEventListener('click', (event) => {
+    event.preventDefault();
 
-    let productId = getProductId();
-    // fonction qui répete la fonction çi-dessus pour ne pas ré-écrire le code
-    showProductDetails(productId);
-    let addToCart = document.getElementById('addToCart');
-    addToCart.addEventListener('click', (event) => {
-      event.preventDefault();
-    });
-    addCart();
+    // Appel de la fonction validation de la selction couleur et quantité  
+    if(validSelect()){
+      // Appel de la fonction pour l'ajout au panier
+      addCart();
+    }
+  });
+    
+  
   
 }
