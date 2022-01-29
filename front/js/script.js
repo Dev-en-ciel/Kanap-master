@@ -18,7 +18,4 @@ fetch("http://localhost:3000/api/products")
                 </a>`;
         })
     })
-    // // retour message au cas ou la récuperation des ressources a échouée
-    // .catch(_error => ("Erreur lors de la connexion au server"));
-    // // faire en sorte d'affiche un message d'erreur en pleine page.
 }
