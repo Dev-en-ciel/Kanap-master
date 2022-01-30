@@ -74,11 +74,11 @@ function optionSelect() {
 
   return true;
 }
+
 let addConfirm = () => {
   alert('Votre produit a bien été ajouté');
 }
-// 
-
+// Utilisation de window.onload pour que les fonctions s'éxecute à la fin du chargement du des objets du DOM 
 window.onload = () => {
 
   // Appel de la fonction de récuperation de l'id du produit
@@ -97,7 +97,4 @@ window.onload = () => {
       addCart();
     }
   });
-
-
-
 }
