@@ -25,60 +25,37 @@ function showProductDetails(productId) {
     })
 }
 
-
-//Ajout des produits choisis dans le localstorage
-//Ajout des produits au panier
+//  Ajout du produit au panier
 function addCart() {
-  // mise en place des variables utiles pour ma fonction
-  let choiceQuantity = document.getElementById('quantity');
-  let choiceColors = document.getElementById('colors');
-  // let imageURL = "";
-
-  let details = {
+  // détail du produit
+  let detailProduct = {
     id: getProductId(),
-    image: imageURL,
-    name: title.textContent,
-    color: choiceColors.value,
-    quantity: choiceQuantity.value,
-  }
-// Mise en place du localStorage
-let productInLocalStorage = JSON.parse(localStorage.getItem('product'));
+    color: document.getElementById("colors").value,
+    quantity: document.getElementById("quantity").value
+  };
 
-let addInLocalStorage = () => {
-
-  //je récupère le choix du client et les données du localstorage
-  productInLocalStorage.push(details);
-    localStorage.setItem('product', JSON.stringify(productInLocalStorage));
-}
-
-
-  let update = false;
-  //Verification qu'il n'y a pas les mêmes produits avec une boucle
-  if (productInLocalStorage) {
-    productInLocalStorage.forEach(function (productconfirmation, key) {
-
-          if (productconfirmation.id === getProductId && productconfirmation.color === choiceColors.value) {
-            productInLocalStorage[key].quantity = parseInt(productconfirmation.quantity) + parseInt(choiceQuantity.value++);
-            localStorage.setItem('product', JSON.stringify(productInLocalStorage));
-            update = true;
-            addConfirm();
-      }
-    });
-
-    if (!update) {
-    productInLocalStorage.quantity ++
-      addInLocalStorage();
-      addConfirm();
+  let product = [];
+    // Vérifier que le panier ne contien pas de produit de la meme couleur
+    if (localStorage.getItem('cart')) {
+        product = JSON.parse(localStorage.getItem('cart'));
+          for (item in product) {
+            if (product[item].id == detailProduct.id && product[item].color == detailProduct.color) {
+                (product[item].quantity = parseInt(product[item].quantity) + parseInt(detailProduct.quantity));
+                localStorage.setItem('cart', JSON.stringify(product));
+                optionSelect();
+                return
+            }
+          };
+      
+      };
+      // Vérification de la quantité 
+    if (detailProduct.color != '' && detailProduct.quantity > 0 && detailProduct.quantity < 100) {
+      product.push(detailProduct);
+      localStorage.setItem('cart', JSON.stringify(product))
+      optionSelect();
     }
-  }
-
-  else {
-    productInLocalStorage = [];
-    addInLocalStorage();
-    addConfirm();
-  }
-
 }
+
 // Verification de la selection de la quantité et de la couleur 
 function optionSelect() {
 
@@ -97,9 +74,9 @@ function optionSelect() {
 
   return true;
 }
-  let addConfirm = () => {
-    alert('Votre produit a bien été ajouté');
-  }
+let addConfirm = () => {
+  alert('Votre produit a bien été ajouté');
+}
 // 
 
 window.onload = () => {
