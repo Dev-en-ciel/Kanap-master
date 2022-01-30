@@ -1,47 +1,68 @@
-// variable utiles
 
-
-// récuperation des données du localStorage
+// RECUPERER LES PRODUITS STOCKES DANS LE LOCALSTORAGE   //
+let products = [];
 let productInLocalStorage = JSON.parse(localStorage.getItem('product'));
 
-console.log(productInLocalStorage)
+// AFFICHER LES PRODUITS DU PANIER
 
-// creation et insertion des élèments du panier
+// je sélectionne la partie html concernée
+let cartItem = document.getElementById('cartAndFormContainer');
 
-// si le panier est vide on affiche 'votre panier est vide'
-if (productInLocalStorage <=0){
-document.querySelector("#cart__items").innerHTML = 
-`<p>Votre panier est vide</p>`
+// si le panier est vide : afficher 'le panier est vide'
+if (productInLocalStorage === null || productInLocalStorage.length <= 0) {
+  document.querySelector("#cart__items").innerHTML = `
+    <p>Votre panier est vide !</p>
+    `;
+console.log('coucou');
 }
-// sinon on affiche les produits du panier
+// sinon afficher les produits dans le localStorage
 else {
-document.getElementById('cart__items');
-// obtenir tout les articles du panier
-for( let i = 0; i < productInLocalStorage; i++){
+
+  const itemCart = document.getElementById('cart__items');
+
+  // expression initiale
+  function displayItem() {
+    for (i = 0; i < productInLocalStorage.length; i++) {
+        products.push(productInLocalStorage[i].id);
+
+      if (itemCart) {
+
+      // mise en place du code html
+      itemCart.innerHTML += `
+        <article class="cart__item" data-id="${productInLocalStorage[i].id}" data-color="${productInLocalStorage.color}">
+          <div class="cart__item__img">
+            <img src="${productInLocalStorage[i].image}" alt="${productInLocalStorage[i].alt}">
+          </div>
+          <div class="cart__item__content">
+            <div class="cart__item__content__titlePrice">
+              <h2>${productInLocalStorage[i].name}</h2>
+              <p>${productInLocalStorage[i].color}</p>
+              <p>${productInLocalStorage[i].price} €</p>
+            </div>
+            <div class="cart__item__content__settings">
+              <div class="cart__item__content__settings__quantity">
+                <p>Qté : </p>
+                <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${productInLocalStorage[i].quantity}">
+              </div>
+              <div class="cart__item__content__settings__delete">
+                <p class="deleteItem">Supprimer</p>
+              </div>
+            </div>
+          </div>
+        </article>`;
+      }
+    }
+  }
+ displayItem();
+console.log('coucou toi');
 }
 
-// affichage des produits
 
-document.querySelector('#cart__items').innerHTML +=
-`<article class="cart__item" data-id="${productInLocalStorage.Id}" data-color="${productInLocalStorage.color}">
-                <div class="cart__item__img">
-                  <img src="${productInLocalStorage.imageUrl}" alt="${productInLocalStorage.altTxt}">
-                </div>
-                <div class="cart__item__content">
-                  <div class="cart__item__content__description">
-                    <h2>${productInLocalStorage.name}</h2>
-                    <p>${productInLocalStorage.color}</p>
-                    <p>${productInLocalStorage.price}</p>
-                  </div>
-                  <div class="cart__item__content__settings">
-                    <div class="cart__item__content__settings__quantity">
-                      <p>Qté : </p>
-                      <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${productInLocalStorage.quantity}">
-                    </div>
-                    <div class="cart__item__content__settings__delete">
-                      <p class="deleteItem">Supprimer</p>
-                    </div>
-                  </div>
-                </div>
-              </article>`
-};
+
+
+
+
+
+window.onload = () => {
+
+}

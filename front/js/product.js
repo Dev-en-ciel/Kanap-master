@@ -25,6 +25,60 @@ function showProductDetails(productId) {
     })
 }
 
+
+//Ajout des produits choisis dans le localstorage
+//Ajout des produits au panier
+function addCart() {
+  // mise en place des variables utiles pour ma fonction
+  let choiceQuantity = document.getElementById('quantity');
+  let choiceColors = document.getElementById('colors');
+  // let imageURL = "";
+
+  let details = {
+    id: getProductId(),
+    image: imageURL,
+    name: title.textContent,
+    color: choiceColors.value,
+    quantity: choiceQuantity.value,
+  }
+// Mise en place du localStorage
+let productInLocalStorage = JSON.parse(localStorage.getItem('product'));
+
+let addInLocalStorage = () => {
+
+  //je récupère le choix du client et les données du localstorage
+  productInLocalStorage.push(details);
+    localStorage.setItem('product', JSON.stringify(productInLocalStorage));
+}
+
+
+  let update = false;
+  //Verification qu'il n'y a pas les mêmes produits avec une boucle
+  if (productInLocalStorage) {
+    productInLocalStorage.forEach(function (productconfirmation, key) {
+
+          if (productconfirmation.id === getProductId && productconfirmation.color === choiceColors.value) {
+            productInLocalStorage[key].quantity = parseInt(productconfirmation.quantity) + parseInt(choiceQuantity.value++);
+            localStorage.setItem('product', JSON.stringify(productInLocalStorage));
+            update = true;
+            addConfirm();
+      }
+    });
+
+    if (!update) {
+    productInLocalStorage.quantity ++
+      addInLocalStorage();
+      addConfirm();
+    }
+  }
+
+  else {
+    productInLocalStorage = [];
+    addInLocalStorage();
+    addConfirm();
+  }
+
+}
 // Verification de la selection de la quantité et de la couleur 
 function optionSelect() {
 
@@ -43,51 +97,6 @@ function optionSelect() {
 
   return true;
 }
-
-//Ajout des produits choisis dans le localstorage
-//Ajout des produits au panier
-function addCart() {
-  // mise en place des variables utiles pour ma fonction
-  let choiceQuantity = document.getElementById('quantity');
-  let choiceColors = document.getElementById('colors');
-
-  let details = {
-    id: getProductId(),
-    image: imageURL,
-    name: title.textContent,
-    color: choiceColors.value,
-    quantity: choiceQuantity.value,
-  }
-// Mise en place du localStorage
-let productInLocalStorage = JSON.parse(localStorage.getItem('product'));
-
-let addInLocalStorage = () => {
-    let searchProduct = productInLocalStorage.find(item => item.id == details && item.color == details.color);
-      console.log('coucou')
-      if (searchProduct != undefined){
-        let addQuantity = parseInt(details.quantity) + parseInt(searchProduct.quantity)
-        searchProduct.quantity = addQuantity
-        addConfirm();
-      }
-      else {
-        details.quantity = details.quantity;
-        productInLocalStorage.push(details);
-      }
-    // les valeurs envoyées et converties en chaine de caractaires Json 
-    localStorage.setItem('product', JSON.stringify(productInLocalStorage));
-
-      if (productInLocalStorage){
-        addInLocalStorage();
-        addConfirm();
-      }
-      else {
-        productInLocalStorage =[]
-        addInLocalStorage();
-        addConfirm();
-      }
-    }
-}
-
   let addConfirm = () => {
     alert('Votre produit a bien été ajouté');
   }
