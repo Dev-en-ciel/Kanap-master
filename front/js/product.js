@@ -9,10 +9,9 @@ function showProductDetails(productId) {
   fetch("http://localhost:3000/api/products/" + productId)
     .then(res => res.json())
     .then(product => {
-
       let image = document.getElementsByClassName('item__img')
       image[0].innerHTML = `<img src="${product.imageUrl}" alt=${product.altTxt}">`;
-      imageURL = product.imageUrl;
+      imageUrl = product.imageUrl;
       imageAlt = product.altTxt;
       document.getElementById('title').innerHTML = `<h1>${product.name}</h1>`;
       document.getElementById('price').innerHTML = `${product.price}`;
@@ -27,35 +26,39 @@ function showProductDetails(productId) {
 
 //  Ajout du produit au panier
 function addCart() {
+  let imageUrl = '';
+  let imageAlt = '';
+
   // détail du produit
   let detailProduct = {
     id: getProductId(),
-    color: document.getElementById("colors").value,
-    quantity: document.getElementById("quantity").value
+    image: imageUrl,
+    altTxt: imageAlt,
+    name: document.querySelector("#title").textContent,
+    color: document.querySelector("#colors").value,
+    quantity: document.querySelector("#quantity").value,
+    price: document.querySelector("#price").textContent
   };
-
   let product = [];
-    // Vérifier que le panier ne contien pas de produit de la meme couleur
-    if (localStorage.getItem('cart')) {
-        product = JSON.parse(localStorage.getItem('cart'));
-          for (item in product) {
-            if (product[item].id == detailProduct.id && product[item].color == detailProduct.color) {
-                (product[item].quantity = parseInt(product[item].quantity) + parseInt(detailProduct.quantity));
-                localStorage.setItem('cart', JSON.stringify(product));
-                optionSelect();
-                return
-            }
-          };
-      
-      };
-      // Vérification de la quantité 
-    if (detailProduct.color != '' && detailProduct.quantity > 0 && detailProduct.quantity < 100) {
-      product.push(detailProduct);
-      localStorage.setItem('cart', JSON.stringify(product))
-      optionSelect();
-    }
-}
+  // Vérifier que le panier ne contien pas de produit de la meme couleur
+  if (localStorage.getItem('product')) {
+    product = JSON.parse(localStorage.getItem('product'));
+    for (item in product) {
+      if (product[item].id == detailProduct.id && product[item].color == detailProduct.color) {
+        (product[item].quantity = parseInt(product[item].quantity) + parseInt(detailProduct.quantity));
+        localStorage.setItem('product', JSON.stringify(product));
+        optionSelect();
+        return
+      }
+    };
+  };
+  if (detailProduct.color != "" && detailProduct.quantity > 0 && detailProduct.quantity < 100) {
+    product.push(detailProduct);
+    localStorage.setItem('product', JSON.stringify(product))
+    addConfirm();
 
+  }
+}
 // Verification de la selection de la quantité et de la couleur 
 function optionSelect() {
 
@@ -74,11 +77,11 @@ function optionSelect() {
 
   return true;
 }
-
 let addConfirm = () => {
   alert('Votre produit a bien été ajouté');
 }
-// Utilisation de window.onload pour que les fonctions s'éxecute à la fin du chargement du des objets du DOM 
+
+
 window.onload = () => {
 
   // Appel de la fonction de récuperation de l'id du produit
