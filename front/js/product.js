@@ -27,34 +27,38 @@ function showProductDetails(productId) {
 //  Ajout du produit au panier
 function addCart() {
   let products = [];
-  
+  let name = document.querySelector("#title").textContent;
+  let color = document.querySelector("#colors").value;
+  let quantity = document.querySelector("#quantity").value;
+  let price = document.querySelector("#price").textContent;
+
   // détail du produit
   let detailProduct = {
     id: getProductId(),
     imageUrl: imageUrl,
     altTxt: imageAlt,
-    name: document.querySelector("#title").textContent,
-    color: document.querySelector("#colors").value,
-    quantity: document.querySelector("#quantity").value,
-    price: document.querySelector("#price").textContent
+    name: name,
+    color: color,
+    quantity: quantity,
+    price: price
   };
+ 
   // Vérifier que le panier ne contient pas de produit de la meme couleur
-  if (localStorage.getItem('product')) {
-    products = JSON.parse(localStorage.getItem('product'));
+  if (localStorage.getItem('products')) {
+    products = JSON.parse(localStorage.getItem('products'));
     for (let product in products) {
-      if (product.id == detailProduct.id && product.color == detailProduct.color) {
-        (product.quantity = parseInt(product.quantity) + parseInt(detailProduct.quantity));
-        localStorage.setItem('product', JSON.stringify(product));
+      if (products.id === detailProduct.id && products.color === detailProduct.color) {
+        products.quantity += parseInt(detailProduct.quantity); 
+        localStorage.setItem('products', JSON.stringify(products));
         optionSelect();
         return
       }
     };
   };
-  if (detailProduct.color != "" && detailProduct.quantity > 0 && detailProduct.quantity < 100) {
+  if (detailProduct.color != '' && detailProduct.quantity > 0 && detailProduct.quantity < 100) {
     products.push(detailProduct);
-    localStorage.setItem('product', JSON.stringify(products))
+    localStorage.setItem('products', JSON.stringify(products))
     addConfirm();
-
   }
 }
 // Verification de la selection de la quantité et de la couleur 

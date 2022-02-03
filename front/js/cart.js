@@ -1,8 +1,8 @@
 
 // Récuperer les données du  Localstorage 
 let product = [];
-product = JSON.parse(localStorage.getItem('product'));
-console.table(product)
+products = JSON.parse(localStorage.getItem('products'));
+console.table(products)
 // Enplacemment des elements injectés  dans le dom
 let displayProduct = document.querySelector('#cart__items')
 
@@ -191,7 +191,7 @@ function validFormulaire() {
     let form = document.querySelector('.cart__order__form');
 
     //Variable contenant les RegExp : (Expression Reguliére) 
-    let identityRegExp = new RegExp(`^[a-zA-Z ,.'-]+[a-zA-Z]{2,15}$`, `g`);
+    let identityRegExp = new RegExp(`/^[0-9]{1,5}\s[a-zA-Z.-_']+\s[a-zA-Z.,-_']+\s[a-zA-Z'-_,]+\s[a-zA-Z]+\s[0-9]+$`, `g`);
     let addressRegExp = new RegExp('^[a-zA-Z0-9.-_]+[a-zA-Z0-9.-_]+[a-zA-Z0-9.-_]{2,99}$', 'g');
     let emailRegExp = new RegExp('^[a-zA-Z0-9.-_]+[@]{1}[a-zA-Z0-9.-_]+[.]{1}[a-z]{2,10}$', 'g');
 
