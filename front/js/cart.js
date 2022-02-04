@@ -1,8 +1,8 @@
 
 // Récuperer les données du  Localstorage 
 let product = [];
-products = JSON.parse(localStorage.getItem('products'));
-console.table(products)
+product = JSON.parse(localStorage.getItem('products'));
+console.table(product)
 // Enplacemment des elements injectés  dans le dom
 let displayProduct = document.querySelector('#cart__items')
 
@@ -125,8 +125,9 @@ function modifyquantityproduct() {
             resultFind.quantity = modifyNumberValue;
             product[q].quantity = resultFind.quantity;
 
-            localStorage.setItem('product', JSON.stringify(product));
+            localStorage.setItem('products', JSON.stringify(product));
             location.reload();
+    console.log(q)
         })
     }
 }
@@ -147,7 +148,7 @@ function deleteproduct() {
 
             product = product.filter(el => el.id !== deleteId || el.color !== deleteColor);
 
-            localStorage.setItem('product', JSON.stringify(product));
+            localStorage.setItem('products', JSON.stringify(product));
             // Mise en place d'une alert pour validr la suppression du/des produit(s)
             alert('le produit à bien été supprimer');
             location.reload();
