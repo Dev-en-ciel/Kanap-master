@@ -1,35 +1,39 @@
 // Récuperer les données du  Localstorage
 let products = [];
 products = JSON.parse(localStorage.getItem("products"));
-console.log(products);
+console.log('produit stocké dans le storage', products);
 
+let product = {}
+products.forEach(product => {
+productInApi = product
+if ( product = products.length) 
+console.log( 'produits du storage', productInApi);
+
+})
 function displayItem() {
   const apiUrl = 'http://localhost:3000/api/products/';
-  fetch(apiUrl)
+  fetch(apiUrl + productInApi.id )
     .then(res => res.json())
     .then(productApi => {
-      console.log(productApi);
-      // })
-
+      console.log('produit stocké dans l api', productApi);
 
       // Enplacemment des elements injectés  dans le dom
       let displayProduct = document.querySelector("#cart__items");
-      console.log(displayProduct);
+      // console.log(displayProduct);
+      
       // Si le panier est vide : afficher 'le panier est vide'
       if (localStorage === null || localStorage.length === 0) {
         document.querySelector("#cart__items").innerHTML = `
         <p>Votre panier est vide !</p>`;
         console.log("je suis vide");
-
       } else {
         // Afficher les details du produit du panier
-        products.forEach(product => {
           // Creation et insertion de la balise "article"
           let article = document.createElement("article");
           document.querySelector("#cart__items").appendChild(article);
           article.className = "cart__item";
-          article.setAttribute("data-id", product.id);
-          console.log(product.id);
+          article.setAttribute("data-id", productInApi.id);
+          console.log(productInApi.id);
 
           //Creation et insertion de "div" pour l'image du produit
           let divImg = document.createElement("div");
@@ -38,11 +42,10 @@ function displayItem() {
 
           //Creation et Insertion de l'image
           let img = document.createElement("img");
-          img.src = product.imageUrl;
-          img.alt = product.altTxt;
           divImg.appendChild(img);
-          console.log();
-
+          img.src = productApi.imageUrl;
+          img.alt = productInApi.imageAlt;
+          console.log(productApi.imageUrl);
 
           //creation et insertion de l'élément "div" description produit
           let itemContent = document.createElement("div");
@@ -57,20 +60,19 @@ function displayItem() {
           //Creation et insertion de la balise h2
           let title = document.createElement("h2");
           itemContentTitlePrice.appendChild(title);
-          title.innerHTML = product.name;
-          console.log(product.name);
+          title.innerHTML = productApi.name;
+          // console.log(product.name);
 
           //Creation et insertion de la couleur
           let color = document.createElement("p");
           title.appendChild(color);
-          color.innerHTML = product.color;
-          console.log(product.color);
+          color.innerHTML = productInApi.color;
 
           //Creation et insertion du prix
           let price = document.createElement("p");
           itemContentTitlePrice.appendChild(price);
-          price.innerHTML = product.price + " €";
-          //   console.log(product[i].price);
+          price.innerHTML = productApi.price + " €";
+            // console.log(product.price);
 
           //Creation et insertion de l'élément "div" pour l'élèment div qui contiendra la quantité
           let itemContentSettings = document.createElement("div");
@@ -87,17 +89,17 @@ function displayItem() {
           let Qty = document.createElement("p");
           itemContentSettingsQuantity.appendChild(Qty);
           Qty.innerHTML = "Qté : ";
-
+          console.log('quantité du produit', productInApi.quantity)
+         
           //creation et insertion de l'input pour la quantité
           let quantity = document.createElement("input");
           itemContentSettingsQuantity.appendChild(quantity);
-          quantity.value = product.quantity;
+          quantity.value = productInApi.quantity;
           quantity.className = "itemQuantity";
           quantity.setAttribute("type", "number");
           quantity.setAttribute("min", "0");
           quantity.setAttribute("max", "100");
           quantity.setAttribute("name", "itemQuantity");
-          console.log(product.quantity);
 
           // Creation et insertion de la "div" pour l'élèment supprimer
           let itemContentSettingsDelete = document.createElement("div");
@@ -110,8 +112,7 @@ function displayItem() {
           itemContentSettingsDelete.appendChild(supprimer);
           supprimer.className = "deleteItem";
           supprimer.innerHTML = "Supprimer la commande";
-          console.log(supprimer);
-        })
+        
       }
     })
 }
