@@ -37,14 +37,11 @@ function addCart() {
     color: color,
     quantity: parseInt(quantity),
   };
-  console.log(typeof quantity);
 
   // Vérifier que le panier ne contient pas de produit de la meme couleur & de meme quantité
   if (localStorage.getItem('products')) {
     products = JSON.parse(localStorage.getItem('products'));
-    console.log(products);
     products.forEach((product, i) => {
-      console.log(product);
       if (product.id === detailProduct.id && product.color === detailProduct.color) {
         product.quantity += parseInt(detailProduct.quantity);
         products[i] = product;
