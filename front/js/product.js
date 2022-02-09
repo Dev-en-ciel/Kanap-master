@@ -28,31 +28,26 @@ function showProductDetails(productId) {
 function addCart() {
   let products = [];
   let updated = false;
-  let name = document.querySelector("#title").textContent;
   let color = document.querySelector("#colors").value;
-  let quantity = document.querySelector("#quantity").value;
-  let price = document.querySelector("#price").textContent;
+  let quantity = document.querySelector('#quantity').value;
 
   // détail du produit
   let detailProduct = {
     id: getProductId(),
-    imageUrl: imageUrl,
-    altTxt: imageAlt,
-    name: name,
     color: color,
     quantity: parseInt(quantity),
-    price: price
   };
- 
-  // Vérifier que le panier ne contient pas de produit de la meme couleur
+  console.log(typeof quantity);
+
+  // Vérifier que le panier ne contient pas de produit de la meme couleur & de meme quantité
   if (localStorage.getItem('products')) {
     products = JSON.parse(localStorage.getItem('products'));
     console.log(products);
     products.forEach((product, i) => {
-    console.log(product);
-      if (product.id === detailProduct.id && products.color === detailProduct.color) {
-        product.quantity += parseInt(detailProduct.quantity); 
-        products[i]= product;
+      console.log(product);
+      if (product.id === detailProduct.id && product.color === detailProduct.color) {
+        product.quantity += parseInt(detailProduct.quantity);
+        products[i] = product;
         localStorage.setItem('products', JSON.stringify(products));
         updated = true;
         return true;
@@ -65,6 +60,7 @@ function addCart() {
     addConfirm();
   }
 }
+
 // Verification de la selection de la quantité et de la couleur 
 function optionSelect() {
 
