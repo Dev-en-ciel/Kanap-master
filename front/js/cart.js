@@ -1,13 +1,20 @@
 // Récuperer les données du  Localstorage
-let products = [];
-    products = JSON.parse(localStorage.getItem("products"));
-    console.log('produit stocké dans le storage', products);
+let products = JSON.parse(localStorage.getItem("products"));
+    // console.log('produit stocké dans le storage', products);
 
+// Fonction qui récupère les données de l'api pour les élements manquants
+// et qui ajoute les élements au dom
 function displayItem() {
-  let product = {}
+  // Si le panier est vide : afficher 'le panier est vide'
+  if (localStorage === null || localStorage.length === 0) {
+    document.querySelector("#cart__items").innerHTML = `
+    <p>Votre panier est vide !</p>`;
+    console.log("je suis vide");
+  } else {
+
   products.forEach(product => {
     productInApi = product;
-    console.log('produits du storage', productInApi);
+    // console.log('produits du storage', productInApi);
 
   const apiUrl = 'http://localhost:3000/api/products/';
   fetch(apiUrl + productInApi.id)
@@ -17,20 +24,14 @@ function displayItem() {
 
     // Enplacemment des elements injectés  dans le dom
     let displayProduct = document.querySelector("#cart__items");
-    console.log(displayProduct);
+    // console.log(displayProduct);
 
-    // Si le panier est vide : afficher 'le panier est vide'
-    if (localStorage === null || localStorage.length === 0) {
-      document.querySelector("#cart__items").innerHTML = `
-      <p>Votre panier est vide !</p>`;
-      console.log("je suis vide");
-    } else {
         // Afficher les details du produit du panier
         // Creation et insertion de la balise "article"
         let article = document.createElement("article");
         document.querySelector("#cart__items").appendChild(article);
         article.className = "cart__item";
-        article.setAttribute("data-id", productInApi.id);
+        article.setAttribute("data-id", product.id);
         // console.log(productInApi.id);
 
         //Creation et insertion de "div" pour l'image du produit
@@ -43,7 +44,7 @@ function displayItem() {
         divImg.appendChild(img);
         img.src = productApi.imageUrl;
         img.alt = productApi.imageAlt;
-        console.log(productApi.imageUrl);
+        // console.log(productApi.imageUrl);
 
         //creation et insertion de l'élément "div" description produit
         let itemContent = document.createElement("div");
@@ -59,12 +60,12 @@ function displayItem() {
         let title = document.createElement("h2");
         itemContentTitlePrice.appendChild(title);
         title.innerHTML = productApi.name;
-        // console.log(product.name);
+        // console.log(productApi.name);
 
         //Creation et insertion de la couleur
         let color = document.createElement("p");
         title.appendChild(color);
-        color.innerHTML = productInApi.color;
+        color.innerHTML = product.color;
 
         //Creation et insertion du prix
         let price = document.createElement("p");
@@ -86,7 +87,7 @@ function displayItem() {
         let Qty = document.createElement("p");
         itemContentSettingsQuantity.appendChild(Qty);
         Qty.innerHTML = "Qté : ";
-        console.log('quantité du produit', productInApi.quantity)
+        // console.log('quantité du produit', product.quantity)
 
         //creation et insertion de l'input pour la quantité
         let quantity = document.createElement("input");
@@ -108,16 +109,14 @@ function displayItem() {
         itemContentSettingsDelete.appendChild(supprimer);
         supprimer.className = "deleteItem";
         supprimer.innerHTML = "Supprimer la commande";
-
-      }
-    })
-  }) 
+      })
+    }) 
+  }
 }
+//Calcule la quantité totale des produits du panier
+
 
 // Calcul du nombres de produit et total du prix du panier
-
-
-//Calcule la quantité totale des produits du panier
 
 
 // Mise en place de la suppression de produit(s)
@@ -129,7 +128,7 @@ function validFormulaire() {
   let form = document.querySelector(".cart__order__form");
 
   //Variable contenant les RegExp : (Expression Reguliére)
-  let infoRegExp = new RegExp(`^[a-zA-Zàâäéèêëïîôöùûüç0-9 -]{2,30}$`);
+  let infoRegExp = new RegExp(`^[a-zA-Zàâäéèêëïîôöùûüç°0-9 -]{2,30}$`);
   let emailRegExp = new RegExp(`^[a-zA-Z0-9.-_]+[@]{1}[a-zA-Z0-9.-_]+[.]{1}[a-z]{2,10}$`, `g`);
 
   //   Ecouter la modification du Prenom
