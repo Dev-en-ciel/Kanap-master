@@ -1,35 +1,35 @@
 // Fonction qui récupère les données de l'api pour les élements manquants
-function displayItem(products) {
-
+const displayItem = function(products) {
   // Si le panier est vide : afficher 'le panier est vide'
   if (localStorage === null || localStorage.length === 0) {
     document.querySelector("#cart__items").innerHTML = `
     <p>Votre panier est vide !</p>`;
     console.log("je suis vide");
   } else {
-      
+
     //Variable utile pour le calcul quantité & prix Total 
     let totalItems = 0;
     let totalPrice = 0;
     
     // Afficher les details du produit du panier
+    const apiUrl = 'http://localhost:3000/api/products/';
     products.forEach(product => {
-      const apiUrl = 'http://localhost:3000/api/products/';
       fetch(apiUrl + product.id)
         .then(res => res.json())
-        .then(productApi => { 
+        .then(productApi => {
+          
           // Calcul de la quantité total des articles
           totalItems += product.quantity;
-
-          // Calcul de la somme des produits
-          totalPrice += productApi.price;
-
-          // mise en place de la deuxieme fonction
-          // function showItem(items) {
-          
+         
+         // Calcul du prix totals du panier
+          totalPrice += productApi.price  * product.quantity;
+         
           // Enplacemment des elements injectés  dans le dom
           let displayProduct = document.querySelector("#cart__items");
-
+         
+          // mise en place de la deuxieme fonction
+//*************************ici la fonction a ajouter****************** */
+  
           // Creation et insertion de la balise "article"
           let article = document.createElement("article");
           displayProduct.appendChild(article);
@@ -71,7 +71,7 @@ function displayItem(products) {
           //Creation et insertion du prix
           let price = document.createElement("p");
           itemContentTitlePrice.appendChild(price);
-          price.innerHTML = productApi.price + " €";
+          price.innerHTML = productApi.price * product.quantity + " €";
 
           //Creation et insertion de l'élément "div" pour l'élèment div qui contiendra la quantité
           let itemContentSettings = document.createElement("div");
@@ -98,7 +98,8 @@ function displayItem(products) {
           quantity.setAttribute("min", "0");
           quantity.setAttribute("max", "100");
           quantity.setAttribute("name", "itemQuantity");
-
+          quantity.setAttribute("value", product.quantity)
+          
           // Creation et insertion de la "div" pour l'élèment supprimer
           let itemContentSettingsDelete = document.createElement("div");
           itemContentSettings.appendChild(itemContentSettingsDelete);
@@ -112,36 +113,54 @@ function displayItem(products) {
 
           // Affichage de la quantité
           let totalQuantity = document.getElementById("totalQuantity");
-              totalQuantity.textContent = totalItems;
-          
+          totalQuantity.textContent = totalItems;
+          // Affichage du prix total
           let priceTotal = document.getElementById("totalPrice");
-              priceTotal.textContent = totalPrice;
-      // }
+          priceTotal.textContent = totalPrice;
+          
         })
     })
   }
 }
 
-// Calcul du nombres de produit et total du prix du panier
-// let totalOfprice = [];
+// Mise en place du changement de la quantitée
+function modifyQuantity(products) {
+console.log(products)
+  // Element ciblé pour la modification "itemQuantity"
+    let changeQuantity = document.querySelectorAll("itemQuantity");
+console.log("quanité à modifier",changeQuantity)
+    //Boucle pour le changement de quantité.
 
-// // Récuperation des produits du panier
-// for (let p = 0; p < products.length; p++) {
-//     let priceOfProduct = products[p].price; prendre le prix qui est stocké dans l'api 
-// console.log(products.length)
-//     // la quantité est envoyée dans le tableau 'totalOfProduct'
-//     totalOfprice.push(priceOfProduct)
-// // Additionner les quantités avec la méthode .reduce
-// const reducer = (accumulator, currentValue) => accumulator +currentValue;
-// const prixTotal = totalOfprice.reduce(reducer,0);
-// // console.log(prixTotal);
+}
+// const deleteProduct = () => {
+//   //Suppression de l'article 
+//   let deleteItem = document.querySelectorAll("deleteItem");
+//   for (let i = 0; i < deleteItem.length; i++){
+// console.log(deleteItem.length);
+  
+//   // boucle pour la suppression d'un ou des produit(s)
+//     deleteItem.addEventListener("click", (event) => {
+//       event.preventdefault();
+//     console.log("ok");
+     
+//       // Selection de l ID & de la couleur du produit qui va etre supprimer 
+//       let deleteId = products.id;
+//       let deleteColor = products.color;
+//       console.log(products.color);
+     
+//       //Filtrer l'élément au click sur le bouton supprimé
+//       products = products.filter(el => el.id !== deleteId || element.color !== deleteColor);
+
+//       //Envois des nouvelles données dans le localStorage
+//       localStorage.setItem('products', JSON.stringify(products));
+//       console.log('ok')
+
+//       // Alert pour valider la suppression du produit
+//       alert("le produit vient d'être supprimer");
+//       location.reload();
+//     })
+//   }
 // }
-
-//Mise en place du changement de la quantitée
-
-// Mise en place de la suppression de produit(s)
-
-
 // Gestion du formulaire
 function validFormulaire() {
   // Variable contenant le formulaire
@@ -248,14 +267,13 @@ window.onload = () => {
   displayItem(products);
 
   // Appel de la fonction pour afficher les produits
-  // showItem();
+ 
 
   // Appel de la fonction de modification de la quantité d'un produit
+  modifyQuantity(products);
 
   // Appel de la fonction de suppression d'un produit
-
-  // Appel de la fonction de calcul de la quantité et du prix
-
+  // deleteProduct();
   //Appel de la fonction pour la validation du formulaire
   validFormulaire();
 
