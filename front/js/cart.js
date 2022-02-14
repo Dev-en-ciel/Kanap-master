@@ -28,7 +28,7 @@ const displayItem = function(products) {
           let displayProduct = document.querySelector("#cart__items");
          
           // mise en place de la deuxieme fonction
-//*************************ici la fonction a ajouter****************** */
+          //*************************ici la fonction a ajouter****************** */
   
           // Creation et insertion de la balise "article"
           let article = document.createElement("article");
@@ -87,7 +87,6 @@ const displayItem = function(products) {
           let Qty = document.createElement("p");
           itemContentSettingsQuantity.appendChild(Qty);
           Qty.innerHTML = "Qté : ";
-          // console.log('quantité du produit', product.quantity)
 
           //creation et insertion de l'input pour la quantité
           let quantity = document.createElement("input");
@@ -99,6 +98,7 @@ const displayItem = function(products) {
           quantity.setAttribute("max", "100");
           quantity.setAttribute("name", "itemQuantity");
           quantity.setAttribute("value", product.quantity)
+          console.log('quantité du produit', product.quantity)
           
           // Creation et insertion de la "div" pour l'élèment supprimer
           let itemContentSettingsDelete = document.createElement("div");
@@ -114,10 +114,14 @@ const displayItem = function(products) {
           // Affichage de la quantité
           let totalQuantity = document.getElementById("totalQuantity");
           totalQuantity.textContent = totalItems;
+          
+          //Appel de la fonction de modification de la quantité 
+          modifyQuantity(products);
+          
           // Affichage du prix total
           let priceTotal = document.getElementById("totalPrice");
           priceTotal.textContent = totalPrice;
-          
+          // deleteproduct(products);
         })
     })
   }
@@ -125,42 +129,51 @@ const displayItem = function(products) {
 
 // Mise en place du changement de la quantitée
 function modifyQuantity(products) {
-console.log(products)
+console.log(products);
   // Element ciblé pour la modification "itemQuantity"
-    let changeQuantity = document.querySelectorAll("itemQuantity");
-console.log("quanité à modifier",changeQuantity)
-    //Boucle pour le changement de quantité.
-
+  let changeQuantity = document.querySelectorAll(".itemQuantity");
+  console.log("quanité à modifier", changeQuantity  )
+  console.log('ok')
+  changeQuantity.addEventListener('change', (e) => {
+  e.preventDefault();
+  // Sélection des élèments de même ID et de même Couleur à modifier
+          let modifyQuantity = product.quantity;
+          let modifyNumberValue = changeQuantity.valueAsNumber;
+          
+          const resultFind = product.find(
+            (el) => el.modifynumberProduct !== modifyQuantity);
+            resultFind.quantity = modifyNumberValue;
+          
+          product.quantity = resultFind.quantity;
+          localStorage.setItem("products", JSON.stringify(product));
+          location.reload();
+  })
 }
-// const deleteProduct = () => {
-//   //Suppression de l'article 
-//   let deleteItem = document.querySelectorAll("deleteItem");
-//   for (let i = 0; i < deleteItem.length; i++){
-// console.log(deleteItem.length);
-  
-//   // boucle pour la suppression d'un ou des produit(s)
-//     deleteItem.addEventListener("click", (event) => {
-//       event.preventdefault();
-//     console.log("ok");
-     
-//       // Selection de l ID & de la couleur du produit qui va etre supprimer 
-//       let deleteId = products.id;
-//       let deleteColor = products.color;
-//       console.log(products.color);
-     
-//       //Filtrer l'élément au click sur le bouton supprimé
-//       products = products.filter(el => el.id !== deleteId || element.color !== deleteColor);
+    // function deleteproduct(products) {
+    //   let deleteItem = document.querySelectorAll(".deleteItem");
 
-//       //Envois des nouvelles données dans le localStorage
-//       localStorage.setItem('products', JSON.stringify(products));
-//       console.log('ok')
+    //   // boucle pour la suppression d'un ou des produit(s)
+      
+    //     deleteItem.addEventListener("click", (event) => {
+    //       event.preventDefault();
 
-//       // Alert pour valider la suppression du produit
-//       alert("le produit vient d'être supprimer");
-//       location.reload();
-//     })
-//   }
-// }
+    //       // Sélection de l'élement de même ID et de même couleur à supprimer
+    //       let deleteId = product.id;
+    //       let deleteColor = product.color;
+
+    //       product = product.filter(
+    //         (el) => el.id !== deleteId || el.color !== deleteColor
+    //       );
+
+    //       localStorage.setItem("products", JSON.stringify(product));
+
+    //       // Mise en place d'une alert pour validr la suppression du/des produit(s)
+    //       alert("le produit à bien été supprimer");
+    //       location.reload();
+    //     });
+    //   }
+
+
 // Gestion du formulaire
 function validFormulaire() {
   // Variable contenant le formulaire
@@ -270,7 +283,7 @@ window.onload = () => {
  
 
   // Appel de la fonction de modification de la quantité d'un produit
-  modifyQuantity(products);
+  // modifyQuantity();
 
   // Appel de la fonction de suppression d'un produit
   // deleteProduct();
