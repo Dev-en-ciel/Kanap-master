@@ -34,7 +34,7 @@ function addCart() {
   // détail du produit
   let detailProduct = {
     id: getProductId(),
-    color: color,
+    color: color, 
     quantity: parseInt(quantity),
   };
 

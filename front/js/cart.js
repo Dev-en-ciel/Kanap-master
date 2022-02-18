@@ -22,7 +22,7 @@ function displayItem(products) {
           totalItems += product.quantity;
          
          // Calcul du prix totals du panier
-          totalPrice += productApi.price  * product.quantity;
+          totalPrice += productApi.price * product.quantity;
          
           // Affichage des élements dans le DOM
           showITem(product, productApi);
@@ -117,69 +117,76 @@ function showITem(product, productApi) {
   quantity.setAttribute("max", "100");
   quantity.setAttribute("name", "itemQuantity");
   quantity.setAttribute("value", product.quantity)
+  quantity.addEventListener("change", modifyQuantity);
   
-  // Creation et insertion de la "div" pour l'élèment supprimer
+  //Creation et insertion de la "div" pour l'élèment supprimer
   let itemContentSettingsDelete = document.createElement("div");
   itemContentSettings.appendChild(itemContentSettingsDelete);
   itemContentSettingsDelete.className = "cart__item__content__settings__delete";
 
-  // Creation et insertion de l'élement supprimer
+  //Creation et insertion de l'élement supprimer
   let supprimer = document.createElement("p");
   itemContentSettingsDelete.appendChild(supprimer);
   supprimer.className = "deleteItem";
   supprimer.innerHTML = "Supprimer la commande";
 }
 
-// Mise en place du changement de la quantitée
-// function modifyQuantity(products) {
-//   console.log(products);
+//Mise en place du changement de la quantitée
+function modifyQuantity(event) { // product var extern
+
+  //Element ciblé pour la modification "itemQuantity"
+  let changeQuantity = event.target.value; 
+  //console.log(changeQuantity.length);//nombre de chiffre du champ
+  //console.log(event.target); //cible sur quel element l'evenement aura lieu
+ 
+  // verifier que la quantite se situe entre 1 et 100  
+  let validation = '';
+  if (event.target.value.length >= 1 && event.target.value.length <= 3 && event.target.value >= 1 && event.target.value <= 100) {
+    // si la longeur du champ et sup ou egal a 1 et inf ou = a 3 et que le champ et sup ou = a 1 et inf ou = a 100
+    validation = true; // alors vrai  
+    // true;
+  } else { //sinon faux
+    false
+  }
   
-//   // Element ciblé pour la modification "itemQuantity"
-//   let changeQuantity = document.querySelectorAll(".itemQuantity");
-//   console.log("quanité à modifier", changeQuantity  )
-//   console.log('ok')
-//   changeQuantity.addEventListener('change', (e) => {
-//   e.preventDefault();
+  //convertir en nombre avec parsInt
+  if (validation === true) { //si validation et strictement = a vrai 
+    let convertTargetValue = parseInt(event.target.value, 10); // convert... sera convertie en nombre sur la base de 10
+    // console.log(convertTargetValue);
+    true; 
+  }else{
+    false;
+    // console.log('no')
+  }
+  console.log(localStorage)
+  // 1 ont cible le produit qui se trouve dans le localStorage
+  let products = JSON.parse(localStorage.getItem("products")); // recuperation du localstorage
+  console.log('valeur du champ', event.target.value);
+  console.log('porduit du panier', products);
+  for (i= 0; i < products.length; i++){  //boucle qui parcourt le localstorage
+    if (event.target.value >= 1){  // si la valeur de la quantité et sup ou = a 1 
+      // let test = parseInt(event.target.value, 10);
+
+      // products.push(test)
+      // console.log('test');
+    
+    }else{
+    console.log('error')    
+    }
+  }
+  // 2 ont cible la valeur 
+  // 3 ont modifie la valeur 
+  // 4 ont stock la nouvelle valeur 
+  // 5 ont modifie le prix total de l'article
+  // 6 ont modifie le prix total du panier 
+  // 7 ont modifie la quantité total des articles du panier
+}
+  // location.reload();
   
-//   // Sélection des élèments de même ID et de même Couleur à modifier
-//           let modifyQuantity = product.quantity;
-//           let modifyNumberValue = changeQuantity.valueAsNumber;
-          
-//           const resultFind = product.find(
-//             (el) => el.modifynumberProduct !== modifyQuantity);
-//             resultFind.quantity = modifyNumberValue;
-          
-//           product.quantity = resultFind.quantity;
-//           localStorage.setItem("products", JSON.stringify(product));
-//           location.reload();
-//   })
-// }
-    // function deleteproduct(products) {
-    //   let deleteItem = document.querySelectorAll(".deleteItem");
-
-    //   // boucle pour la suppression d'un ou des produit(s)
-      
-    //     deleteItem.addEventListener("click", (event) => {
-    //       event.preventDefault();
-
-    //       // Sélection de l'élement de même ID et de même couleur à supprimer
-    //       let deleteId = product.id;
-    //       let deleteColor = product.color;
-
-    //       product = product.filter(
-    //         (el) => el.id !== deleteId || el.color !== deleteColor
-    //       );
-
-    //       localStorage.setItem("products", JSON.stringify(product));
-
-    //       // Mise en place d'une alert pour validr la suppression du/des produit(s)
-    //       alert("le produit à bien été supprimer");
-    //       location.reload();
-    //     });
-    //   }
+//Mise en place de la suppression de l'article
 
 
-// Gestion du formulaire
+//Gestion du formulaire
 function validFormulaire() {
   // Variable contenant le formulaire
   let form = document.querySelector(".cart__order__form");
@@ -284,11 +291,6 @@ window.onload = () => {
   // Appel de la fonction parcourir l'api
   displayItem(products);
   
-  // Appel de la fonction de modification de la quantité d'un produit
-  // modifyQuantity();
-
-  // Appel de la fonction de suppression d'un produit
-  // deleteProduct();
   //Appel de la fonction pour la validation du formulaire
   validFormulaire();
 

@@ -18,4 +18,6 @@ fetch("http://localhost:3000/api/products")
                 </a>`;
         })
     })
+        .catch(function (err) {alert("erreur serveur indisponible, veuillez réessayer plus tard.")
+    })
 }
