@@ -31,9 +31,6 @@ function displayItem(products) {
           let totalQuantity = document.getElementById("totalQuantity");
           totalQuantity.textContent = totalItems;
           
-          //Appel de la fonction de modification de la quantité 
-          // modifyQuantity(products);
-          
           // Affichage du prix total
           let priceTotal = document.getElementById("totalPrice");
           priceTotal.textContent = totalPrice;
@@ -42,7 +39,6 @@ function displayItem(products) {
     })
   }
 }
-
 // Affichage des élements dans le DOM 
 function showITem(product, productApi) {
   
@@ -132,59 +128,41 @@ function showITem(product, productApi) {
 }
 
 //Mise en place du changement de la quantitée
-function modifyQuantity(event) { // product var extern
-
-  //Element ciblé pour la modification "itemQuantity"
-  let changeQuantity = event.target.value; 
-  //console.log(changeQuantity.length);//nombre de chiffre du champ
-  //console.log(event.target); //cible sur quel element l'evenement aura lieu
+function modifyQuantity(event) { 
+  let products = JSON.parse(localStorage.getItem("products")); // recuperation du localstorage
+  console.log(event);
+  //V ciblé pour la modification "itemQuantity"
+  let changeQuantity = parseInt(event.target.value);//entier
+  // console.log("nombre de chiffre dans le champ", changeQuantity.length);//nombre de chiffre du champ
+  // console.log("cible l'endroit ou a lieu l'event",event.target); //cible sur quel element l'evenement aura lieu
  
   // verifier que la quantite se situe entre 1 et 100  
-  let validation = '';
-  if (event.target.value.length >= 1 && event.target.value.length <= 3 && event.target.value >= 1 && event.target.value <= 100) {
-    // si la longeur du champ et sup ou egal a 1 et inf ou = a 3 et que le champ et sup ou = a 1 et inf ou = a 100
-    validation = true; // alors vrai  
-    // true;
-  } else { //sinon faux
-    false
+  if (changeQuantity.length == 0 && changeQuantity <= 1 && changeQuantity >= 100) {
+    return false;
   }
   
-  //convertir en nombre avec parsInt
-  if (validation === true) { //si validation et strictement = a vrai 
-    let convertTargetValue = parseInt(event.target.value, 10); // convert... sera convertie en nombre sur la base de 10
-    // console.log(convertTargetValue);
-    true; 
-  }else{
-    false;
-    // console.log('no')
-  }
-  console.log(localStorage)
-  // 1 ont cible le produit qui se trouve dans le localStorage
-  let products = JSON.parse(localStorage.getItem("products")); // recuperation du localstorage
-  console.log('valeur du champ', event.target.value);
-  console.log('porduit du panier', products);
-  for (i= 0; i < products.length; i++){  //boucle qui parcourt le localstorage
-    if (event.target.value >= 1){  // si la valeur de la quantité et sup ou = a 1 
-      // let test = parseInt(event.target.value, 10);
-
-      // products.push(test)
-      // console.log('test');
-    
-    }else{
-    console.log('error')    
+  let productId = event.target.closest("article").dataset.id;
+  let productColor = event.target.closest("article").dataset.color;
+  for (i = 0; i < products.length; i++){
+    console.log(products[i].color);
+    if (products[i].id === productId && products[i].color === productColor){
+      products[i].quantity = changeQuantity;
+      localStorage.setItem("products", JSON.stringify(products));
     }
+  // //   console.log(changeQuantity);
+  console.log(productId, productColor);
   }
-  // 2 ont cible la valeur 
-  // 3 ont modifie la valeur 
-  // 4 ont stock la nouvelle valeur 
   // 5 ont modifie le prix total de l'article
   // 6 ont modifie le prix total du panier 
   // 7 ont modifie la quantité total des articles du panier
+  location.reload();
 }
-  // location.reload();
   
 //Mise en place de la suppression de l'article
 
+
+
+//////////////////////////////////////FORMULAIRE////////////////////////////////////
 
 //Gestion du formulaire
 function validFormulaire() {
@@ -295,5 +273,4 @@ window.onload = () => {
   validFormulaire();
 
 }
-
 

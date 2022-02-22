@@ -43,7 +43,7 @@ function addCart() {
     products = JSON.parse(localStorage.getItem('products'));
     products.forEach((product, i) => {
       if (product.id === detailProduct.id && product.color === detailProduct.color) {
-        product.quantity += parseInt(detailProduct.quantity);
+        product.quantity += detailProduct.quantity;
         products[i] = product;
         localStorage.setItem('products', JSON.stringify(products));
         updated = true;
