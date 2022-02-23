@@ -151,18 +151,27 @@ function modifyQuantity(event) {
 }
   
 //Mise en place de la suppression de l'article
-function deleteProduct() {
+function deleteProduct(event) {
+  //récuperation du panier
   let products = JSON.parse(localStorage.getItem("products"));
+  //élement cibler pour la suppression de produit(s)
   let deleteProduct = document.querySelectorAll(".deleteItem")
+  //récuperation des attributs id et color pour la suppression 
   let productId = event.target.closest("article").dataset.id;
   let productColor = event.target.closest("article").dataset.color;
+  // boucle qui parcourt l élement deleteItem
   for (let i = 0; i < deleteProduct.length; i++){
-  console.log(deleteProduct.length);
   products = products.filter((del) => del.id !== productId || del.color !== productColor);
+  // envoie au localstorage
+  localStorage.setItem("products", JSON.stringify(products));
+  // condition si le panier et vide alors le panier et supprimé 
+    if (products.length === 0){
+      localStorage.clear();
+    }
+    // rafraichissement de la page 
+  location.reload();
   }
   
-  localStorage.setItem("products", JSON.stringify(products));
-  location.reload();
 }
 //////////////////////////////////////FORMULAIRE////////////////////////////////////
 
