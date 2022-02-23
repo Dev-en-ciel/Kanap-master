@@ -121,47 +121,49 @@ function showITem(product, productApi) {
   itemContentSettingsDelete.className = "cart__item__content__settings__delete";
 
   //Creation et insertion de l'élement supprimer
-  let supprimer = document.createElement("p");
-  itemContentSettingsDelete.appendChild(supprimer);
-  supprimer.className = "deleteItem";
-  supprimer.innerHTML = "Supprimer la commande";
+  let deleteItem = document.createElement("p");
+  itemContentSettingsDelete.appendChild(deleteItem);
+  deleteItem.className = "deleteItem";
+  deleteItem.innerHTML = "Supprimer la commande";
+  deleteItem.addEventListener("click", deleteProduct);
 }
 
 //Mise en place du changement de la quantitée
 function modifyQuantity(event) { 
+  
   let products = JSON.parse(localStorage.getItem("products")); // recuperation du localstorage
-  console.log(event);
-  //V ciblé pour la modification "itemQuantity"
+  //Valeur ciblé pour la modification "itemQuantity"
   let changeQuantity = parseInt(event.target.value);//entier
-  // console.log("nombre de chiffre dans le champ", changeQuantity.length);//nombre de chiffre du champ
-  // console.log("cible l'endroit ou a lieu l'event",event.target); //cible sur quel element l'evenement aura lieu
- 
+  
   // verifier que la quantite se situe entre 1 et 100  
   if (changeQuantity.length == 0 && changeQuantity <= 1 && changeQuantity >= 100) {
     return false;
   }
-  
   let productId = event.target.closest("article").dataset.id;
   let productColor = event.target.closest("article").dataset.color;
   for (i = 0; i < products.length; i++){
-    console.log(products[i].color);
     if (products[i].id === productId && products[i].color === productColor){
       products[i].quantity = changeQuantity;
       localStorage.setItem("products", JSON.stringify(products));
     }
-  // //   console.log(changeQuantity);
-  console.log(productId, productColor);
   }
-  // 5 ont modifie le prix total de l'article
-  // 6 ont modifie le prix total du panier 
-  // 7 ont modifie la quantité total des articles du panier
   location.reload();
 }
   
 //Mise en place de la suppression de l'article
-
-
-
+function deleteProduct() {
+  let products = JSON.parse(localStorage.getItem("products"));
+  let deleteProduct = document.querySelectorAll(".deleteItem")
+  let productId = event.target.closest("article").dataset.id;
+  let productColor = event.target.closest("article").dataset.color;
+  for (let i = 0; i < deleteProduct.length; i++){
+  console.log(deleteProduct.length);
+  products = products.filter((del) => del.id !== productId || del.color !== productColor);
+  }
+  
+  localStorage.setItem("products", JSON.stringify(products));
+  location.reload();
+}
 //////////////////////////////////////FORMULAIRE////////////////////////////////////
 
 //Gestion du formulaire
