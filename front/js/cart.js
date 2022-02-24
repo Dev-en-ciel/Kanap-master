@@ -1,10 +1,10 @@
 // Fonction qui récupère les données de l'api pour les élements manquants
 function displayItem(products) {
+  
   // Si le panier est vide : afficher 'le panier est vide'
   if (localStorage === null || localStorage.length === 0) {
     document.querySelector("#cart__items").innerHTML = `
     <p>Votre panier est vide !</p>`;
-    console.log("je suis vide");
   } else {
 
     //Variable utile pour le calcul quantité & prix Total 
@@ -176,12 +176,12 @@ function deleteProduct(event) {
 //////////////////////////////////////FORMULAIRE////////////////////////////////////
 
 //Gestion du formulaire
-function validFormulaire() {
+function validForm() {
   // Variable contenant le formulaire
   let form = document.querySelector(".cart__order__form");
 
   //Variable contenant les RegExp : (Expression Reguliére)
-  let infoRegExp = new RegExp(`^[a-zA-Zàâäéèêëïîôöùûüç°0-9 -]{2,30}$`);
+  let infoRegExp = new RegExp(`^[a-zA-Zàâäéèêëïîôöùûüç°0-9 -]{3,30}$`);
   let emailRegExp = new RegExp(`^[a-zA-Z0-9.-_]+[@]{1}[a-zA-Z0-9.-_]+[.]{1}[a-z]{2,10}$`, `g`);
 
   //   Ecouter la modification du Prenom
@@ -199,6 +199,7 @@ function validFormulaire() {
       firstNameErrorMsg.innerHTML = "Prénom valide";
     } else {
       firstNameErrorMsg.innerHTML = "Champ invalide";
+      alert("Veuillez entrer votre prénom !");
     }
   };
 
@@ -217,6 +218,7 @@ function validFormulaire() {
       lastNameErrorMsg.innerHTML = "Nom valide";
     } else {
       lastNameErrorMsg.innerHTML = "Champ invalide";
+      alert("Veuillez entrer votre Nom !");
     }
   };
   //   Ecouter la modification de l'Adresse
@@ -234,6 +236,7 @@ function validFormulaire() {
       addressErrorMsg.innerHTML = "Adresse valide";
     } else {
       addressErrorMsg.innerHTML = "Champ invalide";
+      alert("Veuillez saisir une adresse valide !");
     }
   };
   //   Ecouter la modification de la ville
@@ -250,6 +253,7 @@ function validFormulaire() {
       cityErrorMsg.innerHTML = "Ville valide";
     } else {
       cityErrorMsg.innerHTML = "Champ invalide";
+      alert("Veuillez indiquer le nom de la ville !");
     }
   };
 
@@ -268,10 +272,39 @@ function validFormulaire() {
       emailErrorMsg.innerHTML = "Email valide";
     } else {
       emailErrorMsg.innerHTML = "Champ invalide";
+      alert("veuillez entrer un email de type dupont@gmail.fr");
     }
   };
 }
-//Envoi des informations client au localstorage
+//Envoi les informations client au localstorage
+function  sendForm(){
+  // récuperation des produits du localstorage 
+  let products = JSON.parse(localStorage.getItem("products"));
+
+  // récuperation du bouton envoyer et evenement au click
+  document.querySelector('#order').addEventListener("click", (event) => {
+    event.preventDefault();
+  // Recuperation des données du formulaire dans un object
+  let contact = {
+  firstName: document.querySelector("#firstName").value,
+  lastName: document.querySelector("#lastName").value,
+  address: document.querySelector("#address").value,
+  city: document.querySelector("#city").value,
+  email: document.querySelector("#email").value
+  }
+  localStorage.setItem("contact", JSON.stringify(contact));
+  
+  // envois des données vers l'api avec la methode Post
+  let send = {
+      methode: "POST",
+      headers: {
+      'Accept': 'application/json',
+      'Content-type': 'application/json'
+      },
+      body: JSON.stringify(contact, products)
+  }
+ }) 
+}
 
 window.onload = () => {
   // Récuperer les données du  Localstorage
@@ -281,7 +314,9 @@ window.onload = () => {
   displayItem(products);
   
   //Appel de la fonction pour la validation du formulaire
-  validFormulaire();
-
+  validForm();
+  
+  //Appel de l'envoie du formulaire
+   sendForm();
 }
 
