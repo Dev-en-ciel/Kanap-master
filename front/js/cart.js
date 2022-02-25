@@ -196,7 +196,7 @@ function validForm() {
 
     // Test de l'expression Reguliere (RegExp)
     if (infoRegExp.test(inputFirstName.value)) {
-      firstNameErrorMsg.innerHTML = "Prénom valide";
+      firstNameErrorMsg.innerHTML = "Valide";
     } else {
       firstNameErrorMsg.innerHTML = "Champ invalide";
       alert("Veuillez entrer votre prénom !");
@@ -215,7 +215,7 @@ function validForm() {
 
     // Test de l'expression Reguliere (RegExp)
     if (infoRegExp.test(inputLastName.value)) {
-      lastNameErrorMsg.innerHTML = "Nom valide";
+      lastNameErrorMsg.innerHTML = "Valide";
     } else {
       lastNameErrorMsg.innerHTML = "Champ invalide";
       alert("Veuillez entrer votre Nom !");
@@ -233,7 +233,7 @@ function validForm() {
 
     // Test de l'expression Reguliere (RegExp)
     if (infoRegExp.test(inputAddress.value)) {
-      addressErrorMsg.innerHTML = "Adresse valide";
+      addressErrorMsg.innerHTML = "Valide";
     } else {
       addressErrorMsg.innerHTML = "Champ invalide";
       alert("Veuillez saisir une adresse valide !");
@@ -250,7 +250,7 @@ function validForm() {
 
     // Test de l'expression Reguliere (RegExp)
     if (infoRegExp.test(inputCity.value)) {
-      cityErrorMsg.innerHTML = "Ville valide";
+      cityErrorMsg.innerHTML = "Valide";
     } else {
       cityErrorMsg.innerHTML = "Champ invalide";
       alert("Veuillez indiquer le nom de la ville !");
@@ -269,7 +269,7 @@ function validForm() {
 
     // Test de l'expression Reguliere (RegExp)
     if (emailRegExp.test(inputEmail.value)) {
-      emailErrorMsg.innerHTML = "Email valide";
+      emailErrorMsg.innerHTML = "Valide";
     } else {
       emailErrorMsg.innerHTML = "Champ invalide";
       alert("veuillez entrer un email de type dupont@gmail.fr");
@@ -280,31 +280,38 @@ function validForm() {
 function  sendForm(){
   // récuperation des produits du localstorage 
   let products = JSON.parse(localStorage.getItem("products"));
-
+  //récuperation de l'id du produit 
+    for (let product of products)
   // récuperation du bouton envoyer et evenement au click
   document.querySelector('#order').addEventListener("click", (event) => {
     event.preventDefault();
   // Recuperation des données du formulaire dans un object
-  let contact = {
-  firstName: document.querySelector("#firstName").value,
-  lastName: document.querySelector("#lastName").value,
-  address: document.querySelector("#address").value,
-  city: document.querySelector("#city").value,
-  email: document.querySelector("#email").value
-  }
-  localStorage.setItem("contact", JSON.stringify(contact));
+  let order = {
+    infoContact: {
+      firstName: document.querySelector("#firstName").value,
+      lastName: document.querySelector("#lastName").value,
+      address: document.querySelector("#address").value,
+      city: document.querySelector("#city").value,
+      email: document.querySelector("#email").value
+    },
+    product: [product.id]
+  };
+  
+  localStorage.setItem("order", JSON.stringify(order));
   
   // envois des données vers l'api avec la methode Post
-  let send = {
+  let sendOrder = {
       methode: "POST",
       headers: {
       'Accept': 'application/json',
       'Content-type': 'application/json'
       },
-      body: JSON.stringify(contact, products)
+      body: JSON.stringify(order)
   }
+
  }) 
 }
+
 
 window.onload = () => {
   // Récuperer les données du  Localstorage
