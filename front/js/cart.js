@@ -280,34 +280,40 @@ function validForm() {
 function  sendForm(){
   // récuperation des produits du localstorage 
   let products = JSON.parse(localStorage.getItem("products"));
-  //récuperation de l'id du produit 
-    for (let product of products)
   // récuperation du bouton envoyer et evenement au click
   document.querySelector('#order').addEventListener("click", (event) => {
     event.preventDefault();
   // Recuperation des données du formulaire dans un object
-  let order = {
-    infoContact: {
-      firstName: document.querySelector("#firstName").value,
-      lastName: document.querySelector("#lastName").value,
-      address: document.querySelector("#address").value,
-      city: document.querySelector("#city").value,
-      email: document.querySelector("#email").value
-    },
-    product: [product.id]
+  let infoContact = {
+    firstName: document.querySelector("#firstName").value,
+    lastName: document.querySelector("#lastName").value,
+    address: document.querySelector("#address").value,
+    city: document.querySelector("#city").value,
+    email: document.querySelector("#email").value
   };
-  
-  localStorage.setItem("order", JSON.stringify(order));
-  
-  // envois des données vers l'api avec la methode Post
-  let sendOrder = {
-      methode: "POST",
-      headers: {
-      'Accept': 'application/json',
-      'Content-type': 'application/json'
-      },
-      body: JSON.stringify(order)
+  console.log(infoContact);
+  // Création d'un tableau qui contiendra les Ids des produits choisis
+  productSend = [];
+  //récuperation de l'id du produit 
+    for (let i = 0; i < products.length; i ++){
+      productSend.push(products[i].id);
+    }
+  let order = {
+  contact: infoContact,
+  productSend
   }
+  console.log(productSend);
+    // products.push(products[i].id);
+  localStorage.setItem("order", JSON.stringify(order));
+  // envois des données vers l'api avec la methode Post
+  // let sendOrder = {
+  //     methode: "POST",
+  //     headers: {
+  //     'Accept': 'application/json',
+  //     'Content-type': 'application/json'
+  //     },
+  //     body: JSON.stringify(order)
+  // }
 
  }) 
 }
