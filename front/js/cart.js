@@ -1,5 +1,5 @@
 // Fonction qui récupère les données de l'api pour les élements manquants
-function displayItem(products) {
+function displayItem(basket) {
   
   // Si le panier est vide : afficher 'le panier est vide'
   if (localStorage === null || localStorage.length === 0) {
@@ -13,7 +13,7 @@ function displayItem(products) {
     
     // Afficher les details du produit du panier
     const apiUrl = 'http://localhost:3000/api/products/';
-    products.forEach(product => {
+    basket.forEach(product => {
       fetch(apiUrl + product.id)
         .then(res => res.json())
         .then(productApi => {
@@ -34,7 +34,7 @@ function displayItem(products) {
           // Affichage du prix total
           let priceTotal = document.getElementById("totalPrice");
           priceTotal.textContent = totalPrice;
-          // deleteproduct(products);
+          // deleteproduct(basket);
         })
     })
   }
@@ -131,7 +131,7 @@ function showITem(product, productApi) {
 //Mise en place du changement de la quantitée
 function modifyQuantity(event) { 
   
-  let products = JSON.parse(localStorage.getItem("products")); // recuperation du localstorage
+  let basket = JSON.parse(localStorage.getItem("basket")); // recuperation du localstorage
   //Valeur ciblé pour la modification "itemQuantity"
   let changeQuantity = parseInt(event.target.value);//entier
   
@@ -141,10 +141,10 @@ function modifyQuantity(event) {
   }
   let productId = event.target.closest("article").dataset.id;
   let productColor = event.target.closest("article").dataset.color;
-  for (i = 0; i < products.length; i++){
-    if (products[i].id === productId && products[i].color === productColor){
-      products[i].quantity = changeQuantity;
-      localStorage.setItem("products", JSON.stringify(products));
+  for (i = 0; i < basket.length; i++){
+    if (basket[i].id === productId && basket[i].color === productColor){
+      basket[i].quantity = changeQuantity;
+      localStorage.setItem("basket", JSON.stringify(basket));
     }
   }
   location.reload();
@@ -153,7 +153,7 @@ function modifyQuantity(event) {
 //Mise en place de la suppression de l'article
 function deleteProduct(event) {
   //récuperation du panier
-  let products = JSON.parse(localStorage.getItem("products"));
+  let basket = JSON.parse(localStorage.getItem("basket"));
   //élement cibler pour la suppression de produit(s)
   let deleteProduct = document.querySelectorAll(".deleteItem")
   //récuperation des attributs id et color pour la suppression 
@@ -161,11 +161,11 @@ function deleteProduct(event) {
   let productColor = event.target.closest("article").dataset.color;
   // boucle qui parcourt l élement deleteItem
   for (let i = 0; i < deleteProduct.length; i++){
-  products = products.filter((del) => del.id !== productId || del.color !== productColor);
+  basket = basket.filter((del) => del.id !== productId || del.color !== productColor);
   // envoie au localstorage
-  localStorage.setItem("products", JSON.stringify(products));
+  localStorage.setItem("basket", JSON.stringify(basket));
   // condition si le panier et vide alors le panier et supprimé 
-    if (products.length === 0){
+    if (basket.length === 0){
       localStorage.clear();
     }
     // rafraichissement de la page 
@@ -277,56 +277,64 @@ function validForm() {
   };
 }
 //Envoi les informations client au localstorage
-function  sendForm(){
+function  sendForm() {
   // récuperation des produits du localstorage 
-  let products = JSON.parse(localStorage.getItem("products"));
+  let basket = JSON.parse(localStorage.getItem("basket"));
   // récuperation du bouton envoyer et evenement au click
   document.querySelector('#order').addEventListener("click", (event) => {
     event.preventDefault();
-  // Recuperation des données du formulaire dans un object
-  let infoContact = {
-    firstName: document.querySelector("#firstName").value,
-    lastName: document.querySelector("#lastName").value,
-    address: document.querySelector("#address").value,
-    city: document.querySelector("#city").value,
-    email: document.querySelector("#email").value
-  };
+    // Recuperation des données du formulaire dans un object
+    let contact = {
+      firstName: document.querySelector("#firstName").value,
+      lastName: document.querySelector("#lastName").value,
+      address: document.querySelector("#address").value,
+      city: document.querySelector("#city").value,
+      email: document.querySelector("#email").value
+    };
     // Création d'un tableau qui contiendra les Ids des produits choisis
-    productSend = [];
+    products = [];
   
     //récuperation de l'id du produit 
-    for (let i = 0; i < products.length; i ++){
-      productSend.push(products[i].id);
+    for (let i = 0; i < basket.length; i ++){
+      products.push(basket[i].id);
     }
   
-  // tableau contenant les infos de l'utilisatuer et les id des produits choisis
-  let order = {
-    infoContact,
-    productSend
-  }
-  // envoi des données au localstorage
-  localStorage.setItem("order", JSON.stringify(order));
+    // tableau contenant les infos de l'utilisatuer et les id des produits choisis
+    let recapOrder = {
+      contact,
+      products
+    }
+
+    // envoi des données au localstorage
+    localStorage.setItem("recapOrder", JSON.stringify(recapOrder));
   
-  // envois des données vers l'api avec la methode Post
-  // let sendOrder = {
-  //     methode: "POST",
-  //     headers: {
-  //     'Accept': 'application/json',
-  //     'Content-type': 'application/json'
-  //     },
-  //     body: JSON.stringify(order)
-  // }
-
- }) 
+    // envois des données vers l'api avec la methode Post
+    fetch("http://localhost:3000/api/products/order", {
+      method: "POST",
+      headers: {
+      'Accept': 'application/json',
+      'Content-type': 'application/json'
+      },
+      body: JSON.stringify(recapOrder)
+    })
+      .then(res => res.json())
+      .then(data => {
+        window.location.href = `confirmation.html?orderId=${data.orderId}`;
+        localStorage.clear();
+      })
+      .catch((err) => {
+        alert("Une erreur est survenue, Veuillez re-éssayer plus tard!")
+      })
+  })
 }
-
+    
 
 window.onload = () => {
   // Récuperer les données du  Localstorage
-  let products = JSON.parse(localStorage.getItem("products"));
+  let basket = JSON.parse(localStorage.getItem("basket"));
 
   // Appel de la fonction parcourir l'api
-  displayItem(products);
+  displayItem(basket);
   
   //Appel de la fonction pour la validation du formulaire
   validForm();
