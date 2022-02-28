@@ -291,20 +291,22 @@ function  sendForm(){
     city: document.querySelector("#city").value,
     email: document.querySelector("#email").value
   };
-  console.log(infoContact);
-  // Création d'un tableau qui contiendra les Ids des produits choisis
-  productSend = [];
-  //récuperation de l'id du produit 
+    // Création d'un tableau qui contiendra les Ids des produits choisis
+    productSend = [];
+  
+    //récuperation de l'id du produit 
     for (let i = 0; i < products.length; i ++){
       productSend.push(products[i].id);
     }
+  
+  // tableau contenant les infos de l'utilisatuer et les id des produits choisis
   let order = {
-  contact: infoContact,
-  productSend
+    infoContact,
+    productSend
   }
-  console.log(productSend);
-    // products.push(products[i].id);
+  // envoi des données au localstorage
   localStorage.setItem("order", JSON.stringify(order));
+  
   // envois des données vers l'api avec la methode Post
   // let sendOrder = {
   //     methode: "POST",
