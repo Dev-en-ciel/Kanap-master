@@ -65,12 +65,12 @@ function optionSelect() {
   let quantity = document.getElementById('quantity');
 
   if (choiceColor.value === '') {
-    window.alert('veuillez sélectionner une couleur')
+    window.alert('Veuillez sélectionner une couleur')
     return false;
   }
 
   if (quantity.value == 0) {
-    window.alert('Veuillez sélectionner une quantité du produit')
+    window.alert('Veuillez sélectionner au moin un produit')
     return false;
   }
 

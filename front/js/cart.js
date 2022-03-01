@@ -271,7 +271,7 @@ function validForm() {
       emailErrorMsg.innerHTML = "Valide";
     } else {
       emailErrorMsg.innerHTML = "Champ invalide";
-      alert("veuillez entrer un email de type dupont@gmail.fr");
+      alert("veuillez entrer un email de type dupont@gmail.fr !");
     }
   };
 }
@@ -279,8 +279,11 @@ function validForm() {
 function sendForm() {
   // récuperation des produits du localstorage 
   let basket = JSON.parse(localStorage.getItem("basket"));
-
+  // récuperation du bouton envoyer et evenement au click
+  document.querySelector('#order').addEventListener("click", (event) => {
+    event.preventDefault();
     // Recuperation des données du formulaire dans un object
+
     let contact = {
       firstName: document.querySelector("#firstName").value,
       lastName: document.querySelector("#lastName").value,
@@ -288,16 +291,20 @@ function sendForm() {
       city: document.querySelector("#city").value,
       email: document.querySelector("#email").value
     };   
-  // récuperation du bouton envoyer et evenement au click
-  document.querySelector('#order').addEventListener("click", (event) => {
-    event.preventDefault();
-     
-  // if (basket === null || ) {
-  //   alert("Votre panier et/ou le formualire est vide");
+    if (basket === null){
+      return alert("Votre panier est vide !")
     
-  //   return 
-  // } else  {
-   
+    }else if ( 
+      contact.firstName == false||
+      contact.lastName == false ||
+      contact.address == false ||
+      contact.city == false ||
+      contact.email == false
+      ){
+       return alert("Veuillez remplir le formulaire pour passer votre commande !")
+       }
+    
+
     // Création d'un tableau qui contiendra les Ids des produits choisis
     products = [];
 
@@ -329,10 +336,10 @@ function sendForm() {
       .catch((err) => {
         alert("Une erreur est survenue, Veuillez re-éssayer plus tard!")
       })
-  // }
 
   })
 }
+
 
 window.onload = () => {
   // Récuperer les données du  Localstorage
