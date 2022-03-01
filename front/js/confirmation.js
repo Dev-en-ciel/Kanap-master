@@ -4,4 +4,6 @@ function numberOrder(){
     let orderId = urlOrder.get("orderId");
     document.getElementById("orderId").textContent = orderId;
 }
+    localStorage.clear();
+    // Appel de la fonction 
     numberOrder();

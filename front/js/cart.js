@@ -1,6 +1,6 @@
 // Fonction qui récupère les données de l'api pour les élements manquants
 function displayItem(basket) {
-  
+
   // Si le panier est vide : afficher 'le panier est vide'
   if (localStorage === null || localStorage.length === 0) {
     document.querySelector("#cart__items").innerHTML = `
@@ -10,27 +10,27 @@ function displayItem(basket) {
     //Variable utile pour le calcul quantité & prix Total 
     let totalItems = 0;
     let totalPrice = 0;
-    
+
     // Afficher les details du produit du panier
     const apiUrl = 'http://localhost:3000/api/products/';
     basket.forEach(product => {
       fetch(apiUrl + product.id)
         .then(res => res.json())
         .then(productApi => {
-          
+
           // Calcul de la quantité total des articles
           totalItems += product.quantity;
-         
-         // Calcul du prix totals du panier
+
+          // Calcul du prix totals du panier
           totalPrice += productApi.price * product.quantity;
-         
+
           // Affichage des élements dans le DOM
           showITem(product, productApi);
-          
+
           // Affichage de la quantité
           let totalQuantity = document.getElementById("totalQuantity");
           totalQuantity.textContent = totalItems;
-          
+
           // Affichage du prix total
           let priceTotal = document.getElementById("totalPrice");
           priceTotal.textContent = totalPrice;
@@ -41,7 +41,7 @@ function displayItem(basket) {
 }
 // Affichage des élements dans le DOM 
 function showITem(product, productApi) {
-  
+
   // Enplacemment des elements injectés  dans le dom
   let displayProduct = document.querySelector("#cart__items");
 
@@ -114,7 +114,7 @@ function showITem(product, productApi) {
   quantity.setAttribute("name", "itemQuantity");
   quantity.setAttribute("value", product.quantity)
   quantity.addEventListener("change", modifyQuantity);
-  
+
   //Creation et insertion de la "div" pour l'élèment supprimer
   let itemContentSettingsDelete = document.createElement("div");
   itemContentSettings.appendChild(itemContentSettingsDelete);
@@ -129,27 +129,26 @@ function showITem(product, productApi) {
 }
 
 //Mise en place du changement de la quantitée
-function modifyQuantity(event) { 
-  
+function modifyQuantity(event) {
   let basket = JSON.parse(localStorage.getItem("basket")); // recuperation du localstorage
   //Valeur ciblé pour la modification "itemQuantity"
   let changeQuantity = parseInt(event.target.value);//entier
-  
+
   // verifier que la quantite se situe entre 1 et 100  
   if (changeQuantity.length == 0 && changeQuantity <= 1 && changeQuantity >= 100) {
     return false;
   }
   let productId = event.target.closest("article").dataset.id;
   let productColor = event.target.closest("article").dataset.color;
-  for (i = 0; i < basket.length; i++){
-    if (basket[i].id === productId && basket[i].color === productColor){
+  for (i = 0; i < basket.length; i++) {
+    if (basket[i].id === productId && basket[i].color === productColor) {
       basket[i].quantity = changeQuantity;
       localStorage.setItem("basket", JSON.stringify(basket));
     }
   }
   location.reload();
 }
-  
+
 //Mise en place de la suppression de l'article
 function deleteProduct(event) {
   //récuperation du panier
@@ -160,18 +159,18 @@ function deleteProduct(event) {
   let productId = event.target.closest("article").dataset.id;
   let productColor = event.target.closest("article").dataset.color;
   // boucle qui parcourt l élement deleteItem
-  for (let i = 0; i < deleteProduct.length; i++){
-  basket = basket.filter((del) => del.id !== productId || del.color !== productColor);
-  // envoie au localstorage
-  localStorage.setItem("basket", JSON.stringify(basket));
-  // condition si le panier et vide alors le panier et supprimé 
-    if (basket.length === 0){
+  for (let i = 0; i < deleteProduct.length; i++) {
+    basket = basket.filter((del) => del.id !== productId || del.color !== productColor);
+    // envoie au localstorage
+    localStorage.setItem("basket", JSON.stringify(basket));
+    // condition si le panier et vide alors le panier et supprimé 
+    if (basket.length === 0) {
       localStorage.clear();
     }
     // rafraichissement de la page 
-  location.reload();
+    location.reload();
   }
-  
+
 }
 //////////////////////////////////////FORMULAIRE////////////////////////////////////
 
@@ -277,12 +276,10 @@ function validForm() {
   };
 }
 //Envoi les informations client au localstorage
-function  sendForm() {
+function sendForm() {
   // récuperation des produits du localstorage 
   let basket = JSON.parse(localStorage.getItem("basket"));
-  // récuperation du bouton envoyer et evenement au click
-  document.querySelector('#order').addEventListener("click", (event) => {
-    event.preventDefault();
+
     // Recuperation des données du formulaire dans un object
     let contact = {
       firstName: document.querySelector("#firstName").value,
@@ -290,44 +287,52 @@ function  sendForm() {
       address: document.querySelector("#address").value,
       city: document.querySelector("#city").value,
       email: document.querySelector("#email").value
-    };
+    };   
+  // récuperation du bouton envoyer et evenement au click
+  document.querySelector('#order').addEventListener("click", (event) => {
+    event.preventDefault();
+     
+  // if (basket === null || ) {
+  //   alert("Votre panier et/ou le formualire est vide");
+    
+  //   return 
+  // } else  {
+   
     // Création d'un tableau qui contiendra les Ids des produits choisis
     products = [];
-  
+
     //récuperation de l'id du produit 
-    for (let i = 0; i < basket.length; i ++){
+    for (let i = 0; i < basket.length; i++) {
       products.push(basket[i].id);
     }
-  
+    
     // tableau contenant les infos de l'utilisatuer et les id des produits choisis
     let recapOrder = {
       contact,
       products
     }
-
     // envoi des données au localstorage
     localStorage.setItem("recapOrder", JSON.stringify(recapOrder));
-  
     // envois des données vers l'api avec la methode Post
     fetch("http://localhost:3000/api/products/order", {
       method: "POST",
       headers: {
-      'Accept': 'application/json',
-      'Content-type': 'application/json'
+        'Accept': 'application/json',
+        'Content-type': 'application/json'
       },
       body: JSON.stringify(recapOrder)
     })
       .then(res => res.json())
       .then(data => {
         window.location.href = `confirmation.html?orderId=${data.orderId}`;
-        localStorage.clear();
       })
       .catch((err) => {
         alert("Une erreur est survenue, Veuillez re-éssayer plus tard!")
       })
+  // }
+
   })
 }
-    
 
 window.onload = () => {
   // Récuperer les données du  Localstorage
@@ -335,11 +340,11 @@ window.onload = () => {
 
   // Appel de la fonction parcourir l'api
   displayItem(basket);
-  
+
   //Appel de la fonction pour la validation du formulaire
   validForm();
-  
+
   //Appel de l'envoie du formulaire
-   sendForm();
+  sendForm();
 }
 
