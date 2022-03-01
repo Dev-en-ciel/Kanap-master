@@ -65,19 +65,19 @@ function optionSelect() {
   let quantity = document.getElementById('quantity');
 
   if (choiceColor.value === '') {
-    window.alert('Veuillez sélectionner une couleur')
+    window.alert("Veuillez sélectionner une couleur !")
     return false;
   }
 
   if (quantity.value == 0) {
-    window.alert('Veuillez sélectionner au moin un produit')
+    window.alert("Veuillez sélectionner au moin un produit !")
     return false;
   }
 
   return true;
 }
 let addConfirm = () => {
-  alert('Votre produit a bien été ajouté');
+  alert("Votre produit a bien été ajouté !");
 }
 
 window.onload = () => {

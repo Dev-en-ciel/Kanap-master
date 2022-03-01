@@ -334,7 +334,7 @@ function sendForm() {
         window.location.href = `confirmation.html?orderId=${data.orderId}`;
       })
       .catch((err) => {
-        alert("Une erreur est survenue, Veuillez re-éssayer plus tard!")
+        alert("Une erreur est survenue, Veuillez re-éssayer plus tard !")
       })
 
   })
