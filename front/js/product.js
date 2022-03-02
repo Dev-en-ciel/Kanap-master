@@ -47,6 +47,7 @@ function addCart() {
         basket[i] = product;
         localStorage.setItem('basket', JSON.stringify(basket));
         updated = true;
+        addConfirm();
         return true;
       }
     });
