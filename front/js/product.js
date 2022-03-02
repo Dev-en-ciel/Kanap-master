@@ -31,7 +31,7 @@ function addCart() {
   let color = document.querySelector("#colors").value;
   let quantity = document.querySelector('#quantity').value;
 
-  // détail du produit
+  // détail du produit0
   let detailProduct = {
     id: getProductId(),
     color: color, 

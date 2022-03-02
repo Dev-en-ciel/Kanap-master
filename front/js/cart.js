@@ -153,24 +153,28 @@ function modifyQuantity(event) {
 function deleteProduct(event) {
   //récuperation du panier
   let basket = JSON.parse(localStorage.getItem("basket"));
+  
   //élement cibler pour la suppression de produit(s)
   let deleteProduct = document.querySelectorAll(".deleteItem")
+  
   //récuperation des attributs id et color pour la suppression 
   let productId = event.target.closest("article").dataset.id;
   let productColor = event.target.closest("article").dataset.color;
+  
   // boucle qui parcourt l élement deleteItem
   for (let i = 0; i < deleteProduct.length; i++) {
     basket = basket.filter((del) => del.id !== productId || del.color !== productColor);
+   
     // envoie au localstorage
     localStorage.setItem("basket", JSON.stringify(basket));
+    
     // condition si le panier et vide alors le panier et supprimé 
-    if (basket.length === 0) {
+    if (basket.length === 0 ) {
       localStorage.clear();
     }
     // rafraichissement de la page 
     location.reload();
   }
-
 }
 //////////////////////////////////////FORMULAIRE////////////////////////////////////
 
@@ -279,19 +283,21 @@ function validForm() {
 function sendForm() {
   // récuperation des produits du localstorage 
   let basket = JSON.parse(localStorage.getItem("basket"));
+  let quantity = document.querySelector(".itemQuantity")
+
   // récuperation du bouton envoyer et evenement au click
   document.querySelector('#order').addEventListener("click", (event) => {
     event.preventDefault();
     // Recuperation des données du formulaire dans un object
 
-    let contact = {
-      firstName: document.querySelector("#firstName").value,
-      lastName: document.querySelector("#lastName").value,
-      address: document.querySelector("#address").value,
-      city: document.querySelector("#city").value,
-      email: document.querySelector("#email").value
-    };   
-    if (basket === null){
+  let contact = {
+    firstName: document.querySelector("#firstName").value,
+    lastName: document.querySelector("#lastName").value,
+    address: document.querySelector("#address").value,
+    city: document.querySelector("#city").value,
+    email: document.querySelector("#email").value
+  };   
+    if (basket === null || quantity === null) {
       return alert("Votre panier est vide !")
     
     }else if ( 
@@ -301,9 +307,8 @@ function sendForm() {
       contact.city == false ||
       contact.email == false
       ){
-       return alert("Veuillez remplir le formulaire pour passer votre commande !")
-       }
-    
+      return alert("Veuillez remplir le formulaire pour passer votre commande !")
+      }
 
     // Création d'un tableau qui contiendra les Ids des produits choisis
     products = [];
