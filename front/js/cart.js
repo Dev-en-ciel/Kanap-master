@@ -11,7 +11,7 @@ function displayItem(basket) {
     let totalItems = 0;
     let totalPrice = 0;
 
-    // Afficher les details du produit du panier
+    // Afficher les details du produit du panier-è
     const apiUrl = 'http://localhost:3000/api/products/';
     basket.forEach(product => {
       fetch(apiUrl + product.id)
@@ -283,7 +283,6 @@ function validForm() {
 function sendForm() {
   // récuperation des produits du localstorage 
   let basket = JSON.parse(localStorage.getItem("basket"));
-  let quantity = document.querySelector(".itemQuantity")
 
   // récuperation du bouton envoyer et evenement au click
   document.querySelector('#order').addEventListener("click", (event) => {
@@ -297,7 +296,7 @@ function sendForm() {
     city: document.querySelector("#city").value,
     email: document.querySelector("#email").value
   };   
-    if (basket === null || quantity === null) {
+    if (basket === null) {
       return alert("Votre panier est vide !")
     
     }else if ( 
