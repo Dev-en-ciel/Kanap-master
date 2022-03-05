@@ -36,7 +36,15 @@ function displayItem(basket) {
           priceTotal.textContent = totalPrice;
           // deleteproduct(basket);
         })
-    })
+        .catch(function (err) {
+          let alertServer = document.querySelector("#cart__items");
+          let pServer = document.createElement("p");
+          alertServer.appendChild(pServer);
+          pServer.textContent = "Erreur serveur indisponible, veuillez réessayer plus tard !";
+          pServer.style.fontSize = "20px";
+          pServer.style.textAlign = "center"
+        });
+    });
   }
 }
 // Affichage des élements dans le DOM 
@@ -109,7 +117,7 @@ function showITem(product, productApi) {
   quantity.value = product.quantity;
   quantity.className = "itemQuantity";
   quantity.setAttribute("type", "number");
-  quantity.setAttribute("min", "0");
+  quantity.setAttribute("min", "1");
   quantity.setAttribute("max", "100");
   quantity.setAttribute("name", "itemQuantity");
   quantity.setAttribute("value", product.quantity)
@@ -124,7 +132,7 @@ function showITem(product, productApi) {
   let deleteItem = document.createElement("p");
   itemContentSettingsDelete.appendChild(deleteItem);
   deleteItem.className = "deleteItem";
-  deleteItem.innerHTML = "Supprimer la commande";
+  deleteItem.innerHTML = "Supprimer";
   deleteItem.addEventListener("click", deleteProduct);
 }
 
@@ -136,7 +144,7 @@ function modifyQuantity(event) {
 
   // verifier que la quantite se situe entre 1 et 100  
   if (changeQuantity.length == 0 && changeQuantity <= 1 && changeQuantity >= 100) {
-    return false;
+     return false;
   }
   let productId = event.target.closest("article").dataset.id;
   let productColor = event.target.closest("article").dataset.color;
@@ -153,27 +161,34 @@ function modifyQuantity(event) {
 function deleteProduct(event) {
   //récuperation du panier
   let basket = JSON.parse(localStorage.getItem("basket"));
-  
+
   //élement cibler pour la suppression de produit(s)
   let deleteProduct = document.querySelectorAll(".deleteItem")
-  
+
   //récuperation des attributs id et color pour la suppression 
   let productId = event.target.closest("article").dataset.id;
   let productColor = event.target.closest("article").dataset.color;
-  
+
   // boucle qui parcourt l élement deleteItem
   for (let i = 0; i < deleteProduct.length; i++) {
     basket = basket.filter((del) => del.id !== productId || del.color !== productColor);
-   
+
     // envoie au localstorage
     localStorage.setItem("basket", JSON.stringify(basket));
-    
+
     // condition si le panier et vide alors le panier et supprimé 
-    if (basket.length === 0 ) {
+    if (basket.length === 0) {
       localStorage.clear();
     }
+
+  }
+  // Condition pour que l'utilisateur confirme la suppression du produit
+  let delProduct = confirm("Voulez-vous supprimer ce produit ?");
+  if (delProduct == true) {
     // rafraichissement de la page 
     location.reload();
+  } else {
+    return
   }
 }
 //////////////////////////////////////FORMULAIRE////////////////////////////////////
@@ -184,7 +199,7 @@ function validForm() {
   let form = document.querySelector(".cart__order__form");
 
   //Variable contenant les RegExp : (Expression Reguliére)
-  let infoRegExp = new RegExp(`^[a-zA-Zàâäéèêëïîôöùûüç°0-9 -]{3,30}$`);
+  let infoRegExp = new RegExp(`^[a-zA-Zàâäéèêëïîôöùûüç°0-9 -]{1,}$`);
   let emailRegExp = new RegExp(`^[a-zA-Z0-9.-_]+[@]{1}[a-zA-Z0-9.-_]+[.]{1}[a-z]{2,10}$`, `g`);
 
   //   Ecouter la modification du Prenom
@@ -199,10 +214,8 @@ function validForm() {
 
     // Test de l'expression Reguliere (RegExp)
     if (infoRegExp.test(inputFirstName.value)) {
-      firstNameErrorMsg.innerHTML = "Valide";
     } else {
       firstNameErrorMsg.innerHTML = "Champ invalide";
-      alert("Veuillez entrer votre prénom !");
     }
   };
 
@@ -218,10 +231,8 @@ function validForm() {
 
     // Test de l'expression Reguliere (RegExp)
     if (infoRegExp.test(inputLastName.value)) {
-      lastNameErrorMsg.innerHTML = "Valide";
     } else {
       lastNameErrorMsg.innerHTML = "Champ invalide";
-      alert("Veuillez entrer votre Nom !");
     }
   };
   //   Ecouter la modification de l'Adresse
@@ -236,10 +247,8 @@ function validForm() {
 
     // Test de l'expression Reguliere (RegExp)
     if (infoRegExp.test(inputAddress.value)) {
-      addressErrorMsg.innerHTML = "Valide";
     } else {
       addressErrorMsg.innerHTML = "Champ invalide";
-      alert("Veuillez saisir une adresse valide !");
     }
   };
   //   Ecouter la modification de la ville
@@ -253,10 +262,8 @@ function validForm() {
 
     // Test de l'expression Reguliere (RegExp)
     if (infoRegExp.test(inputCity.value)) {
-      cityErrorMsg.innerHTML = "Valide";
     } else {
       cityErrorMsg.innerHTML = "Champ invalide";
-      alert("Veuillez indiquer le nom de la ville !");
     }
   };
 
@@ -272,90 +279,107 @@ function validForm() {
 
     // Test de l'expression Reguliere (RegExp)
     if (emailRegExp.test(inputEmail.value)) {
-      emailErrorMsg.innerHTML = "Valide";
     } else {
       emailErrorMsg.innerHTML = "Champ invalide";
-      alert("veuillez entrer un email de type dupont@gmail.fr !");
+
     }
   };
 }
+
 //Envoi les informations client au localstorage
 function sendForm() {
   // récuperation des produits du localstorage 
   let basket = JSON.parse(localStorage.getItem("basket"));
 
-  // récuperation du bouton envoyer et evenement au click
-  document.querySelector('#order').addEventListener("click", (event) => {
-    event.preventDefault();
-    // Recuperation des données du formulaire dans un object
-
+  // Recuperation des données du formulaire dans un object
   let contact = {
     firstName: document.querySelector("#firstName").value,
     lastName: document.querySelector("#lastName").value,
     address: document.querySelector("#address").value,
     city: document.querySelector("#city").value,
     email: document.querySelector("#email").value
-  };   
-    if (basket === null) {
-      return alert("Votre panier est vide !")
-    
-    }else if ( 
-      contact.firstName == false||
-      contact.lastName == false ||
-      contact.address == false ||
-      contact.city == false ||
-      contact.email == false
-      ){
-      return alert("Veuillez remplir le formulaire pour passer votre commande !")
-      }
+  };
+  if (basket === null) {
+    let alertBasket = document.querySelector("#limitedWidthBlock");
+    let pBasket = document.createElement("p");
+    alertBasket.appendChild(pBasket);
+    pBasket.textContent = "Votre panier est vide !";
+    pBasket.style.fontSize = "22px";
+    pBasket.style.textAlign = "center";
+    setTimeout(function () {
+      pBasket.remove();
+    }, 1500);
+    return
+  } else if (
+    contact.firstName == false ||
+    contact.lastName == false ||
+    contact.address == false ||
+    contact.city == false ||
+    contact.email == false
+  ) {
+    let alertForm = document.querySelector("#limitedWidthBlock");
+    let pForm = document.createElement("p");
+    alertForm.appendChild(pForm);
+    pForm.textContent = "Veuillez remplir le formulaire pour passer votre commande !";
+    pForm.style.fontSize = "22px";
+    pForm.style.textAlign = "center";
+    setTimeout(function () {
+      pForm.remove();
+    }, 1500);
+    return
+  }
 
-    // Création d'un tableau qui contiendra les Ids des produits choisis
-    products = [];
+  // Création d'un tableau qui contiendra les Ids des produits choisis
+  products = [];
 
-    //récuperation de l'id du produit 
-    for (let i = 0; i < basket.length; i++) {
-      products.push(basket[i].id);
-    }
-    
-    // tableau contenant les infos de l'utilisatuer et les id des produits choisis
-    let recapOrder = {
-      contact,
-      products
-    }
-    // envoi des données au localstorage
-    localStorage.setItem("recapOrder", JSON.stringify(recapOrder));
-    // envois des données vers l'api avec la methode Post
-    fetch("http://localhost:3000/api/products/order", {
-      method: "POST",
-      headers: {
-        'Accept': 'application/json',
-        'Content-type': 'application/json'
-      },
-      body: JSON.stringify(recapOrder)
-    })
-      .then(res => res.json())
-      .then(data => {
-        window.location.href = `confirmation.html?orderId=${data.orderId}`;
-      })
-      .catch((err) => {
-        alert("Une erreur est survenue, Veuillez re-éssayer plus tard !")
-      })
+  //récuperation de l'id du produit 
+  for (let i = 0; i < basket.length; i++) {
+    products.push(basket[i].id);
+  }
 
+  // tableau contenant les infos de l'utilisatuer et les id des produits choisis
+  let recapOrder = {
+    contact,
+    products
+  }
+  // envoi des données au localstorage
+  localStorage.setItem("recapOrder", JSON.stringify(recapOrder));
+  // envois des données vers l'api avec la methode Post
+  fetch("http://localhost:3000/api/products/order", {
+    method: "POST",
+    headers: {
+      'Accept': 'application/json',
+      'Content-type': 'application/json'
+    },
+    body: JSON.stringify(recapOrder)
   })
+    .then(res => res.json())
+    .then(data => {
+      window.location.href = `confirmation.html?orderId=${data.orderId}`;
+    })
+    .catch((err) => {
+      let alertServer = document.querySelector('#items');
+      let pServer = document.createElement("p");
+      alertServer.appendChild(pServer);
+      pServer.textContent = "Erreur serveur indisponible, veuillez réessayer plus tard !";
+      pServer.style.fontSize = "20px";
+    });
 }
-
 
 window.onload = () => {
   // Récuperer les données du  Localstorage
   let basket = JSON.parse(localStorage.getItem("basket"));
 
-  // Appel de la fonction parcourir l'api
+  //Appel de la fonction parcourir l'api
   displayItem(basket);
 
-  //Appel de la fonction pour la validation du formulaire
-  validForm();
-
-  //Appel de l'envoie du formulaire
-  sendForm();
+  //Récuperation du bouton envoyer et evenement au click
+  document.querySelector('#order').addEventListener("click", (event) => {
+    event.preventDefault();
+    //Appel de la fonction sendForm si validForm est ok
+    if (validForm()); {
+      sendForm();
+    }
+  });
 }
 

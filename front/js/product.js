@@ -22,6 +22,13 @@ function showProductDetails(productId) {
         colors.options[colors.options.length] = new Option(product.colors[number]);
       }
     })
+    .catch(function (err) {
+        let alertServer = document.querySelector('#items');
+        let pServer = document.createElement("p");
+        alertServer.appendChild(pServer);
+        pServer.textContent = "Erreur serveur indisponible, veuillez réessayer plus tard !";
+        pServer.style.fontSize = "20px"
+    });
 }
 
 //  Ajout du produit au panier
@@ -65,22 +72,39 @@ function optionSelect() {
   let choiceColor = document.getElementById('colors');
   let quantity = document.getElementById('quantity');
 
-  if (choiceColor.value === '') {
-    window.alert("Veuillez sélectionner une couleur !")
+  if (choiceColor.value === '' || quantity.value == 0) {
+    errChamp();
     return false;
   }
-
-  if (quantity.value == 0) {
-    window.alert("Veuillez sélectionner au moin un produit !")
-    return false;
-  }
-
   return true;
 }
+///////////////// gestion des alertes//////////////// 
 let addConfirm = () => {
-  alert("Votre produit a bien été ajouté !");
-}
+  let alertAdd = document.querySelector(".item__content");
+  let divAdd = document.createElement("Div");
+  alertAdd.appendChild(divAdd);  
+  divAdd.setAttribute ("class", "alertAdd");
 
+  let pAdd = document.createElement('p');    
+  divAdd.appendChild(pAdd);
+  pAdd.style.fontSize = "25px";
+  pAdd.style.textAlign= 'center';
+  pAdd.textContent = "Votre produit a bien été ajouté au panier !" ;
+  setTimeout(function(){
+    pAdd.remove()
+  }, 1500)
+}
+let errChamp = () => {
+  let alertColor = document.querySelector(".item__content__settings");
+  let pcolor = document.createElement('p');
+  alertColor.appendChild(pcolor);
+  pcolor.style.textAlign = 'center';
+  pcolor.style.fontSize = '20px';
+  pcolor.textContent = "Veuillez séléctionner une couleur et une quantité !"
+  setTimeout(function(){
+    pcolor.remove()
+  }, 1500)
+}
 window.onload = () => {
 
   // Appel de la fonction de récuperation de l'id du produit

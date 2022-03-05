@@ -18,6 +18,11 @@ fetch("http://localhost:3000/api/products")
                 </a>`;
         })
     })
-        .catch(function (err) {alert("Erreur serveur indisponible, veuillez réessayer plus tard !")
+        .catch(function (err) {
+        let alertServer = document.querySelector('#items');
+        let pServer = document.createElement("p");
+        alertServer.appendChild(pServer);
+        pServer.textContent = "Erreur serveur indisponible, veuillez réessayer plus tard !";
+        pServer.style.fontSize = "20px"
     })
 }
