@@ -27,7 +27,9 @@ function showProductDetails(productId) {
         let pServer = document.createElement("p");
         alertServer.appendChild(pServer);
         pServer.textContent = "Erreur serveur indisponible, veuillez réessayer plus tard !";
-        pServer.style.fontSize = "20px"
+        pServer.style.backgroundColor = "white";
+        pServer.style.fontSize = "20px";
+        pServer.style.borderRadius = "5px";
     });
 }
 
@@ -89,10 +91,12 @@ let addConfirm = () => {
   divAdd.appendChild(pAdd);
   pAdd.style.fontSize = "25px";
   pAdd.style.textAlign= 'center';
+  pAdd.style.backgroundColor ="white";
+  pAdd.style.color = "#28B148";
   pAdd.textContent = "Votre produit a bien été ajouté au panier !" ;
   setTimeout(function(){
     pAdd.remove()
-  }, 1500)
+  }, 2000)
 }
 let errChamp = () => {
   let alertColor = document.querySelector(".item__content__settings");
@@ -100,10 +104,12 @@ let errChamp = () => {
   alertColor.appendChild(pcolor);
   pcolor.style.textAlign = 'center';
   pcolor.style.fontSize = '20px';
+  pcolor.style.backgroundColor ="white";
+  pcolor.style.color = "#28B148";
   pcolor.textContent = "Veuillez séléctionner une couleur et une quantité !"
   setTimeout(function(){
     pcolor.remove()
-  }, 1500)
+  }, 2000)
 }
 window.onload = () => {
 
@@ -117,7 +123,7 @@ window.onload = () => {
   document.querySelector('#addToCart').addEventListener('click', (event) => {
     event.preventDefault();
 
-    // Appel de la fonction validation de la selction couleur et quantité  
+    // Appel de la fonction validation de la selection couleur et quantité  
     if (optionSelect()) {
       // Appel de la fonction pour l'ajout au panier
       addCart();

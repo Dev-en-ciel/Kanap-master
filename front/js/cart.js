@@ -7,9 +7,6 @@ function displayItem(basket) {
     <p>Votre panier est vide !</p>`;
   } else {
 
-    //Variable utile pour le calcul quantité & prix Total 
-    let totalItems = 0;
-    let totalPrice = 0;
 
     // Afficher les details du produit du panier-è
     const apiUrl = 'http://localhost:3000/api/products/';
@@ -17,6 +14,9 @@ function displayItem(basket) {
       fetch(apiUrl + product.id)
         .then(res => res.json())
         .then(productApi => {
+          //Variable utile pour le calcul quantité & prix Total 
+          let totalItems = 0;
+          let totalPrice = 0;
 
           // Calcul de la quantité total des articles
           totalItems += product.quantity;
@@ -43,6 +43,10 @@ function displayItem(basket) {
           pServer.textContent = "Erreur serveur indisponible, veuillez réessayer plus tard !";
           pServer.style.fontSize = "20px";
           pServer.style.textAlign = "center"
+          pServer.style.backgroundColor = "white";
+          pServer.style.color = "#28B148";
+          pServer.style.borderRadius = "5px";
+          pServer.style.padding = "8px";
         });
     });
   }
@@ -144,7 +148,7 @@ function modifyQuantity(event) {
 
   // verifier que la quantite se situe entre 1 et 100  
   if (changeQuantity.length == 0 && changeQuantity <= 1 && changeQuantity >= 100) {
-     return false;
+    return false;
   }
   let productId = event.target.closest("article").dataset.id;
   let productColor = event.target.closest("article").dataset.color;
@@ -164,31 +168,22 @@ function deleteProduct(event) {
 
   //élement cibler pour la suppression de produit(s)
   let deleteProduct = document.querySelectorAll(".deleteItem")
-
   //récuperation des attributs id et color pour la suppression 
   let productId = event.target.closest("article").dataset.id;
   let productColor = event.target.closest("article").dataset.color;
 
-  // boucle qui parcourt l élement deleteItem
-  for (let i = 0; i < deleteProduct.length; i++) {
-    basket = basket.filter((del) => del.id !== productId || del.color !== productColor);
-
-    // envoie au localstorage
-    localStorage.setItem("basket", JSON.stringify(basket));
-
-    // condition si le panier et vide alors le panier et supprimé 
-    if (basket.length === 0) {
-      localStorage.clear();
-    }
-
-  }
   // Condition pour que l'utilisateur confirme la suppression du produit
   let delProduct = confirm("Voulez-vous supprimer ce produit ?");
   if (delProduct == true) {
+    basket = basket.filter((del) => del.id !== productId || del.color !== productColor);
+    // envoie au localstorage
+    localStorage.setItem("basket", JSON.stringify(basket));
     // rafraichissement de la page 
     location.reload();
-  } else {
-    return
+  }
+  // condition si le panier et vide alors le panier et supprimé
+  if (basket.length === 0) {
+    localStorage.clear();
   }
 }
 //////////////////////////////////////FORMULAIRE////////////////////////////////////
@@ -197,95 +192,48 @@ function deleteProduct(event) {
 function validForm() {
   // Variable contenant le formulaire
   let form = document.querySelector(".cart__order__form");
-
+  
   //Variable contenant les RegExp : (Expression Reguliére)
-  let infoRegExp = new RegExp(`^[a-zA-Zàâäéèêëïîôöùûüç°0-9 -]{1,}$`);
+  let infoRegExp = new RegExp(`^[a-zA-Zàâäéèêëïîôöùûüç° -]{1,}$`);
+  let addressRegExp = new RegExp(`^[a-zA-Zàâäéèêëïîôöùûüç°0-9 -]{1,}$`);
   let emailRegExp = new RegExp(`^[a-zA-Z0-9.-_]+[@]{1}[a-zA-Z0-9.-_]+[.]{1}[a-z]{2,10}$`, `g`);
+  
+  let erreur;
+  //champs 
+  let firstName = document.getElementById("firstName");
+  let lastName = document.getElementById("lastName");
+  let address = document.getElementById("address");
+  let city = document.getElementById("city");
+  let email= document.getElementById("email");
 
-  //   Ecouter la modification du Prenom
-  form.firstName.addEventListener("change", function () {
-    validFirstName(this);
-  });
 
-  //Validation du Prénom
-  const validFirstName = function (inputFirstName) {
-    //Récuperation de la balise'p' message d'erreur
-    let firstNameErrorMsg = inputFirstName.nextElementSibling;
+ if (!infoRegExp.test(firstName.value)) {
+  erreur = document.getElementById("firstNameErrorMsg").innerHTML = "Champ invalide";
+ }else{
+  erreur = document.getElementById("firstNameErrorMsg").innerHTML = " ";
+ }
+ if (!infoRegExp.test(lastName.value)) {
+  erreur = document.getElementById("lastNameErrorMsg").innerHTML = "Champ invalide";
+ }else{
+  erreur = document.getElementById("lastNameErrorMsg").innerHTML = " ";
+ }
 
-    // Test de l'expression Reguliere (RegExp)
-    if (infoRegExp.test(inputFirstName.value)) {
-    } else {
-      firstNameErrorMsg.innerHTML = "Champ invalide";
-    }
-  };
-
-  //   Ecouter la modification du Nom
-  form.lastName.addEventListener("change", function () {
-    validlastName(this);
-  });
-
-  //Validation du Nom
-  const validlastName = function (inputLastName) {
-    //Récuperation de la balise'p' message d'erreur
-    let lastNameErrorMsg = inputLastName.nextElementSibling;
-
-    // Test de l'expression Reguliere (RegExp)
-    if (infoRegExp.test(inputLastName.value)) {
-    } else {
-      lastNameErrorMsg.innerHTML = "Champ invalide";
-    }
-  };
-  //   Ecouter la modification de l'Adresse
-  form.address.addEventListener("change", function () {
-    validAddress(this);
-  });
-
-  //Validation de l'Adresse
-  const validAddress = function (inputAddress) {
-    //Récuperation de la balise'p' message d'erreur
-    let addressErrorMsg = inputAddress.nextElementSibling;
-
-    // Test de l'expression Reguliere (RegExp)
-    if (infoRegExp.test(inputAddress.value)) {
-    } else {
-      addressErrorMsg.innerHTML = "Champ invalide";
-    }
-  };
-  //   Ecouter la modification de la ville
-  form.city.addEventListener("change", function () {
-    validCity(this);
-  });
-  //Validation de la Ville
-  const validCity = function (inputCity) {
-    //Récuperation de la balise'p' message d'erreur
-    let cityErrorMsg = inputCity.nextElementSibling;
-
-    // Test de l'expression Reguliere (RegExp)
-    if (infoRegExp.test(inputCity.value)) {
-    } else {
-      cityErrorMsg.innerHTML = "Champ invalide";
-    }
-  };
-
-  //   Ecouter la modification de l'Email'
-  form.email.addEventListener("change", function () {
-    validEmail(this);
-  });
-
-  //Validation de la Ville
-  const validEmail = function (inputEmail) {
-    //Récuperation de la balise'p' message d'erreur
-    let emailErrorMsg = inputEmail.nextElementSibling;
-
-    // Test de l'expression Reguliere (RegExp)
-    if (emailRegExp.test(inputEmail.value)) {
-    } else {
-      emailErrorMsg.innerHTML = "Champ invalide";
-
-    }
-  };
+ if (!addressRegExp.test(address.value)) {
+  erreur = document.getElementById("addressErrorMsg").innerHTML = "Champ invalide";
+ }
+ if (!infoRegExp.test(city.value)) {
+  erreur = document.getElementById("cityErrorMsg").innerHTML = "Champ invalide";
+ }
+ if (!emailRegExp.test(email.value)) {
+  erreur = document.getElementById("emailErrorMsg").innerHTML = "Champ invalide";
+ } else{
+  return true;
+ }
 }
 
+ 
+
+// validForm();
 //Envoi les informations client au localstorage
 function sendForm() {
   // récuperation des produits du localstorage 
@@ -306,6 +254,10 @@ function sendForm() {
     pBasket.textContent = "Votre panier est vide !";
     pBasket.style.fontSize = "22px";
     pBasket.style.textAlign = "center";
+    pBasket.style.background = "white"
+    pBasket.style.fontSize = "20px";
+    pBasket.style.color = "#28B148";
+    pBasket.style.padding = "8px";
     setTimeout(function () {
       pBasket.remove();
     }, 1500);
@@ -321,8 +273,11 @@ function sendForm() {
     let pForm = document.createElement("p");
     alertForm.appendChild(pForm);
     pForm.textContent = "Veuillez remplir le formulaire pour passer votre commande !";
-    pForm.style.fontSize = "22px";
     pForm.style.textAlign = "center";
+    pForm.style.background = "white"
+    pForm.style.fontSize = "20px";
+    pForm.style.color = "#28B148";
+    pForm.style.padding = "8px";
     setTimeout(function () {
       pForm.remove();
     }, 1500);
@@ -358,11 +313,6 @@ function sendForm() {
       window.location.href = `confirmation.html?orderId=${data.orderId}`;
     })
     .catch((err) => {
-      let alertServer = document.querySelector('#items');
-      let pServer = document.createElement("p");
-      alertServer.appendChild(pServer);
-      pServer.textContent = "Erreur serveur indisponible, veuillez réessayer plus tard !";
-      pServer.style.fontSize = "20px";
     });
 }
 
@@ -373,11 +323,13 @@ window.onload = () => {
   //Appel de la fonction parcourir l'api
   displayItem(basket);
 
+
   //Récuperation du bouton envoyer et evenement au click
   document.querySelector('#order').addEventListener("click", (event) => {
     event.preventDefault();
-    //Appel de la fonction sendForm si validForm est ok
-    if (validForm()); {
+   
+    //Appel de la fonction sendForm  
+    if (validForm()) {   
       sendForm();
     }
   });

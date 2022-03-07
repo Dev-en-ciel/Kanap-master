@@ -23,6 +23,10 @@ fetch("http://localhost:3000/api/products")
         let pServer = document.createElement("p");
         alertServer.appendChild(pServer);
         pServer.textContent = "Erreur serveur indisponible, veuillez réessayer plus tard !";
-        pServer.style.fontSize = "20px"
+        pServer.style.fontSize = "18px"
+        pServer.style.backgroundColor = "white";
+        pServer.style.color = "#28B148";
+        pServer.style.borderRadius = "5px";
+        pServer.style.padding = "8px";
     })
 }
