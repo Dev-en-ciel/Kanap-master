@@ -250,52 +250,51 @@ function sendForm() {
     contact.address == false ||
     contact.city == false ||
     contact.email == false
-  )
-  {
-  let alertForm = document.querySelector("#limitedWidthBlock");
-  let pForm = document.createElement("p");
-  alertForm.appendChild(pForm);
-  pForm.textContent = "Veuillez remplir le formulaire pour passer votre commande !";
-  pForm.style.textAlign = "center";
-  pForm.style.background = "white"
-  pForm.style.fontSize = "20px";
-  pForm.style.color = "#28B148";
-  pForm.style.padding = "8px";
-  setTimeout(function () {
-    pForm.remove();
-  }, 1500);
-  return
-}
-// Création d'un tableau qui contiendra les Ids des produits choisis
-products = [];
+  ) {
+    let alertForm = document.querySelector("#limitedWidthBlock");
+    let pForm = document.createElement("p");
+    alertForm.appendChild(pForm);
+    pForm.textContent = "Veuillez remplir le formulaire pour passer votre commande !";
+    pForm.style.textAlign = "center";
+    pForm.style.background = "white"
+    pForm.style.fontSize = "20px";
+    pForm.style.color = "#28B148";
+    pForm.style.padding = "8px";
+    setTimeout(function () {
+      pForm.remove();
+    }, 1500);
+    return
+  }
+  // Création d'un tableau qui contiendra les Ids des produits choisis
+  products = [];
 
-//récuperation de l'id du produit 
-for (let i = 0; i < basket.length; i++) {
-  products.push(basket[i].id);
-}
+  //récuperation de l'id du produit 
+  for (let i = 0; i < basket.length; i++) {
+    products.push(basket[i].id);
+  }
 
-// tableau contenant les infos de l'utilisatuer et les id des produits choisis
-let recapOrder = {
-  contact,
-  products
-}
-// envoi des données au localstorage
-localStorage.setItem("recapOrder", JSON.stringify(recapOrder));
-// envois des données vers l'api avec la methode Post
-fetch("http://localhost:3000/api/products/order", {
-  method: "POST",
-  headers: {
-    'Accept': 'application/json',
-    'Content-type': 'application/json'
-  },
-  body: JSON.stringify(recapOrder)
-})
-  .then(res => res.json())
-  .then(data => {
-    window.location.href = `confirmation.html?orderId=${data.orderId}`;
+  // tableau contenant les infos de l'utilisatuer et les id des produits choisis
+  let recapOrder = {
+    contact,
+    products
+  }
+  // envoi des données au localstorage
+  localStorage.setItem("recapOrder", JSON.stringify(recapOrder));
+  // envois des données vers l'api avec la methode Post
+  fetch("http://localhost:3000/api/products/order", {
+    method: "POST",
+    headers: {
+      'Accept': 'application/json',
+      'Content-type': 'application/json'
+    },
+    body: JSON.stringify(recapOrder)
   })
-  .catch((err) => {
-  });
+    .then(res => res.json())
+    .then(data => {
+      window.location.href = `confirmation.html?orderId=${data.orderId}`;
+    })
+    .catch((err) => {
+    });
 }
 function alertMess() {
   let alertForm = document.querySelector("#limitedWidthBlock");
