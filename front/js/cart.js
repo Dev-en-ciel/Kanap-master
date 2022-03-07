@@ -7,6 +7,8 @@ function displayItem(basket) {
     <p>Votre panier est vide !</p>`;
   } else {
 
+    let totalItems = 0;
+    let totalPrice = 0;
 
     // Afficher les details du produit du panier-è
     const apiUrl = 'http://localhost:3000/api/products/';
@@ -15,8 +17,6 @@ function displayItem(basket) {
         .then(res => res.json())
         .then(productApi => {
           //Variable utile pour le calcul quantité & prix Total 
-          let totalItems = 0;
-          let totalPrice = 0;
 
           // Calcul de la quantité total des articles
           totalItems += product.quantity;
@@ -192,48 +192,30 @@ function deleteProduct(event) {
 function validForm() {
   // Variable contenant le formulaire
   let form = document.querySelector(".cart__order__form");
-  
+
   //Variable contenant les RegExp : (Expression Reguliére)
   let infoRegExp = new RegExp(`^[a-zA-Zàâäéèêëïîôöùûüç° -]{1,}$`);
   let addressRegExp = new RegExp(`^[a-zA-Zàâäéèêëïîôöùûüç°0-9 -]{1,}$`);
   let emailRegExp = new RegExp(`^[a-zA-Z0-9.-_]+[@]{1}[a-zA-Z0-9.-_]+[.]{1}[a-z]{2,10}$`, `g`);
-  
-  let erreur;
+
   //champs 
   let firstName = document.getElementById("firstName");
   let lastName = document.getElementById("lastName");
   let address = document.getElementById("address");
   let city = document.getElementById("city");
-  let email= document.getElementById("email");
+  let email = document.getElementById("email");
 
-
- if (!infoRegExp.test(firstName.value)) {
-  erreur = document.getElementById("firstNameErrorMsg").innerHTML = "Champ invalide";
- }else{
-  erreur = document.getElementById("firstNameErrorMsg").innerHTML = " ";
- }
- if (!infoRegExp.test(lastName.value)) {
-  erreur = document.getElementById("lastNameErrorMsg").innerHTML = "Champ invalide";
- }else{
-  erreur = document.getElementById("lastNameErrorMsg").innerHTML = " ";
- }
-
- if (!addressRegExp.test(address.value)) {
-  erreur = document.getElementById("addressErrorMsg").innerHTML = "Champ invalide";
- }
- if (!infoRegExp.test(city.value)) {
-  erreur = document.getElementById("cityErrorMsg").innerHTML = "Champ invalide";
- }
- if (!emailRegExp.test(email.value)) {
-  erreur = document.getElementById("emailErrorMsg").innerHTML = "Champ invalide";
- } else{
-  return true;
- }
+  if (!infoRegExp.test(firstName.value) ||
+    !infoRegExp.test(lastName.value) ||
+    !infoRegExp.test(lastName.value) ||
+    !infoRegExp.test(city.value) ||
+    !addressRegExp.test(address.value) ||
+    !emailRegExp.test(email.value)) {
+    alertMess();
+  } else {
+    return true;
+  }
 }
-
- 
-
-// validForm();
 //Envoi les informations client au localstorage
 function sendForm() {
   // récuperation des produits du localstorage 
@@ -268,54 +250,68 @@ function sendForm() {
     contact.address == false ||
     contact.city == false ||
     contact.email == false
-  ) {
-    let alertForm = document.querySelector("#limitedWidthBlock");
-    let pForm = document.createElement("p");
-    alertForm.appendChild(pForm);
-    pForm.textContent = "Veuillez remplir le formulaire pour passer votre commande !";
-    pForm.style.textAlign = "center";
-    pForm.style.background = "white"
-    pForm.style.fontSize = "20px";
-    pForm.style.color = "#28B148";
-    pForm.style.padding = "8px";
-    setTimeout(function () {
-      pForm.remove();
-    }, 1500);
-    return
-  }
+  )
+  {
+  let alertForm = document.querySelector("#limitedWidthBlock");
+  let pForm = document.createElement("p");
+  alertForm.appendChild(pForm);
+  pForm.textContent = "Veuillez remplir le formulaire pour passer votre commande !";
+  pForm.style.textAlign = "center";
+  pForm.style.background = "white"
+  pForm.style.fontSize = "20px";
+  pForm.style.color = "#28B148";
+  pForm.style.padding = "8px";
+  setTimeout(function () {
+    pForm.remove();
+  }, 1500);
+  return
+}
+// Création d'un tableau qui contiendra les Ids des produits choisis
+products = [];
 
-  // Création d'un tableau qui contiendra les Ids des produits choisis
-  products = [];
-
-  //récuperation de l'id du produit 
-  for (let i = 0; i < basket.length; i++) {
-    products.push(basket[i].id);
-  }
-
-  // tableau contenant les infos de l'utilisatuer et les id des produits choisis
-  let recapOrder = {
-    contact,
-    products
-  }
-  // envoi des données au localstorage
-  localStorage.setItem("recapOrder", JSON.stringify(recapOrder));
-  // envois des données vers l'api avec la methode Post
-  fetch("http://localhost:3000/api/products/order", {
-    method: "POST",
-    headers: {
-      'Accept': 'application/json',
-      'Content-type': 'application/json'
-    },
-    body: JSON.stringify(recapOrder)
-  })
-    .then(res => res.json())
-    .then(data => {
-      window.location.href = `confirmation.html?orderId=${data.orderId}`;
-    })
-    .catch((err) => {
-    });
+//récuperation de l'id du produit 
+for (let i = 0; i < basket.length; i++) {
+  products.push(basket[i].id);
 }
 
+// tableau contenant les infos de l'utilisatuer et les id des produits choisis
+let recapOrder = {
+  contact,
+  products
+}
+// envoi des données au localstorage
+localStorage.setItem("recapOrder", JSON.stringify(recapOrder));
+// envois des données vers l'api avec la methode Post
+fetch("http://localhost:3000/api/products/order", {
+  method: "POST",
+  headers: {
+    'Accept': 'application/json',
+    'Content-type': 'application/json'
+  },
+  body: JSON.stringify(recapOrder)
+})
+  .then(res => res.json())
+  .then(data => {
+    window.location.href = `confirmation.html?orderId=${data.orderId}`;
+  })
+  .catch((err) => {
+  });
+}
+function alertMess() {
+  let alertForm = document.querySelector("#limitedWidthBlock");
+  let pForm = document.createElement("p");
+  alertForm.appendChild(pForm);
+  pForm.textContent = "Veuillez remplir le formulaire pour passer votre commande !";
+  pForm.style.textAlign = "center";
+  pForm.style.background = "white"
+  pForm.style.fontSize = "20px";
+  pForm.style.color = "#28B148";
+  pForm.style.padding = "8px";
+  setTimeout(function () {
+    pForm.remove();
+  }, 1500);
+  return
+}
 window.onload = () => {
   // Récuperer les données du  Localstorage
   let basket = JSON.parse(localStorage.getItem("basket"));
@@ -327,9 +323,9 @@ window.onload = () => {
   //Récuperation du bouton envoyer et evenement au click
   document.querySelector('#order').addEventListener("click", (event) => {
     event.preventDefault();
-   
+
     //Appel de la fonction sendForm  
-    if (validForm()) {   
+    if (validForm()) {
       sendForm();
     }
   });
