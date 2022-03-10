@@ -4,24 +4,24 @@ function displayItem(basket) {
   // Si le panier est vide : afficher 'le panier est vide'
   if (localStorage === null || localStorage.length === 0) {
     document.querySelector("#cart__items").innerHTML = `
-    <p>Votre panier est vide !</p>`;
+    <p>Votre panier est vide !</p>`
   } else {
 
+    //Variable utile pour le calcul quantité & prix Total 
     let totalItems = 0;
     let totalPrice = 0;
 
-    // Afficher les details du produit du panier-è
+    // Afficher les details du produit du panier
     const apiUrl = 'http://localhost:3000/api/products/';
     basket.forEach(product => {
       fetch(apiUrl + product.id)
         .then(res => res.json())
         .then(productApi => {
-          //Variable utile pour le calcul quantité & prix Total 
 
           // Calcul de la quantité total des articles
           totalItems += product.quantity;
 
-          // Calcul du prix totals du panier
+          // Calcul du prix total du panier
           totalPrice += productApi.price * product.quantity;
 
           // Affichage des élements dans le DOM
@@ -34,21 +34,11 @@ function displayItem(basket) {
           // Affichage du prix total
           let priceTotal = document.getElementById("totalPrice");
           priceTotal.textContent = totalPrice;
-          // deleteproduct(basket);
         })
-        .catch(function (err) {
-          let alertServer = document.querySelector("#cart__items");
-          let pServer = document.createElement("p");
-          alertServer.appendChild(pServer);
-          pServer.textContent = "Erreur serveur indisponible, veuillez réessayer plus tard !";
-          pServer.style.fontSize = "20px";
-          pServer.style.textAlign = "center"
-          pServer.style.backgroundColor = "white";
-          pServer.style.color = "#28B148";
-          pServer.style.borderRadius = "5px";
-          pServer.style.padding = "8px";
-        });
-    });
+      .catch(function (err) {
+        alertApiOut();
+      });
+    })
   }
 }
 // Affichage des élements dans le DOM 
@@ -121,7 +111,7 @@ function showITem(product, productApi) {
   quantity.value = product.quantity;
   quantity.className = "itemQuantity";
   quantity.setAttribute("type", "number");
-  quantity.setAttribute("min", "1");
+  quantity.setAttribute("min", "0");
   quantity.setAttribute("max", "100");
   quantity.setAttribute("name", "itemQuantity");
   quantity.setAttribute("value", product.quantity)
@@ -147,18 +137,25 @@ function modifyQuantity(event) {
   let changeQuantity = parseInt(event.target.value);//entier
 
   // verifier que la quantite se situe entre 1 et 100  
-  if (changeQuantity.length == 0 && changeQuantity <= 1 && changeQuantity >= 100) {
+  if (changeQuantity == 0) {
+    deleteProduct(event);
     return false;
   }
-  let productId = event.target.closest("article").dataset.id;
-  let productColor = event.target.closest("article").dataset.color;
-  for (i = 0; i < basket.length; i++) {
-    if (basket[i].id === productId && basket[i].color === productColor) {
-      basket[i].quantity = changeQuantity;
-      localStorage.setItem("basket", JSON.stringify(basket));
-    }
+  if (changeQuantity <= 0 || changeQuantity >= 100) {
+    alertquantity();
+    return false;
   }
-  location.reload();
+  
+    let productId = event.target.closest("article").dataset.id;
+    let productColor = event.target.closest("article").dataset.color;
+    for (i = 0; i < basket.length; i++) {
+      if (basket[i].id === productId && basket[i].color === productColor) {
+        basket[i].quantity = changeQuantity;
+        localStorage.setItem("basket", JSON.stringify(basket));
+      }
+    }
+    location.reload();
+ 
 }
 
 //Mise en place de la suppression de l'article
@@ -166,8 +163,6 @@ function deleteProduct(event) {
   //récuperation du panier
   let basket = JSON.parse(localStorage.getItem("basket"));
 
-  //élement cibler pour la suppression de produit(s)
-  let deleteProduct = document.querySelectorAll(".deleteItem")
   //récuperation des attributs id et color pour la suppression 
   let productId = event.target.closest("article").dataset.id;
   let productColor = event.target.closest("article").dataset.color;
@@ -190,12 +185,11 @@ function deleteProduct(event) {
 
 //Gestion du formulaire
 function validForm() {
-  // Variable contenant le formulaire
-  let form = document.querySelector(".cart__order__form");
 
   //Variable contenant les RegExp : (Expression Reguliére)
-  let infoRegExp = new RegExp(`^[a-zA-Zàâäéèêëïîôöùûüç° -]{1,}$`);
+  let lastAndFirstNameRegExp = new RegExp(`^[a-zA-Zàâäéèêëïîôöùûüç° -]{1,}$`);
   let addressRegExp = new RegExp(`^[a-zA-Zàâäéèêëïîôöùûüç°0-9 -]{1,}$`);
+  let cityRegExp = new RegExp(`^[a-zA-Zàâäéèêëïîôöùûüç° -]{1,}$`);
   let emailRegExp = new RegExp(`^[a-zA-Z0-9.-_]+[@]{1}[a-zA-Z0-9.-_]+[.]{1}[a-z]{2,10}$`, `g`);
 
   //champs 
@@ -205,17 +199,30 @@ function validForm() {
   let city = document.getElementById("city");
   let email = document.getElementById("email");
 
-  if (!infoRegExp.test(firstName.value) ||
-    !infoRegExp.test(lastName.value) ||
-    !infoRegExp.test(lastName.value) ||
-    !infoRegExp.test(city.value) ||
-    !addressRegExp.test(address.value) ||
-    !emailRegExp.test(email.value)) {
-    alertMess();
-  } else {
-    return true;
+  let isValidForm = true;
+  if (!lastAndFirstNameRegExp.test(firstName.value)) {
+    firstNameErrorMsg.textContent = "erreur";
+    isValidForm = false;
   }
+  if (!lastAndFirstNameRegExp.test(lastName.value)) {
+    lastNameErrorMsg.textContent = "erreur";
+    isValidForm = false;
+  }
+  if (!addressRegExp.test(address.value)) {
+    addressErrorMsg.textContent = "erreur";
+    isValidForm = false;
+  }
+  if (!cityRegExp.test(city.value)) {
+    cityErrorMsg.textContent = "erreur";
+    isValidForm = false;
+  }
+  if (!emailRegExp.test(email.value)) {
+    emailErrorMsg.textContent = "erreur";
+    isValidForm = false;
+  }
+  return isValidForm;
 }
+
 //Envoi les informations client au localstorage
 function sendForm() {
   // récuperation des produits du localstorage 
@@ -230,40 +237,7 @@ function sendForm() {
     email: document.querySelector("#email").value
   };
   if (basket === null) {
-    let alertBasket = document.querySelector("#limitedWidthBlock");
-    let pBasket = document.createElement("p");
-    alertBasket.appendChild(pBasket);
-    pBasket.textContent = "Votre panier est vide !";
-    pBasket.style.fontSize = "22px";
-    pBasket.style.textAlign = "center";
-    pBasket.style.background = "white"
-    pBasket.style.fontSize = "20px";
-    pBasket.style.color = "#28B148";
-    pBasket.style.padding = "8px";
-    setTimeout(function () {
-      pBasket.remove();
-    }, 1500);
-    return
-  } else if (
-    contact.firstName == false ||
-    contact.lastName == false ||
-    contact.address == false ||
-    contact.city == false ||
-    contact.email == false
-  ) {
-    let alertForm = document.querySelector("#limitedWidthBlock");
-    let pForm = document.createElement("p");
-    alertForm.appendChild(pForm);
-    pForm.textContent = "Veuillez remplir le formulaire pour passer votre commande !";
-    pForm.style.textAlign = "center";
-    pForm.style.background = "white"
-    pForm.style.fontSize = "20px";
-    pForm.style.color = "#28B148";
-    pForm.style.padding = "8px";
-    setTimeout(function () {
-      pForm.remove();
-    }, 1500);
-    return
+    alertBasket();
   }
   // Création d'un tableau qui contiendra les Ids des produits choisis
   products = [];
@@ -273,13 +247,12 @@ function sendForm() {
     products.push(basket[i].id);
   }
 
-  // tableau contenant les infos de l'utilisatuer et les id des produits choisis
+  // objet contenant les infos de l'utilisateur et les id des produits choisis
   let recapOrder = {
     contact,
     products
   }
-  // envoi des données au localstorage
-  localStorage.setItem("recapOrder", JSON.stringify(recapOrder));
+
   // envois des données vers l'api avec la methode Post
   fetch("http://localhost:3000/api/products/order", {
     method: "POST",
@@ -293,24 +266,43 @@ function sendForm() {
     .then(data => {
       window.location.href = `confirmation.html?orderId=${data.orderId}`;
     })
-    .catch((err) => {
+    .catch(function (err) {
+      alertApiOut();
     });
+  localStorage.clear();
 }
-function alertMess() {
-  let alertForm = document.querySelector("#limitedWidthBlock");
-  let pForm = document.createElement("p");
-  alertForm.appendChild(pForm);
-  pForm.textContent = "Veuillez remplir le formulaire pour passer votre commande !";
-  pForm.style.textAlign = "center";
-  pForm.style.background = "white"
-  pForm.style.fontSize = "20px";
-  pForm.style.color = "#28B148";
-  pForm.style.padding = "8px";
+//////////////////////////Gestion des alertes////////////////////////
+function timeOut() {
+  let deletAlert = document.querySelector("#messalert")
   setTimeout(function () {
-    pForm.remove();
-  }, 1500);
-  return
+    deletAlert.remove()
+  }, 2000)
 }
+
+function alertquantity() {
+  let alertMessQuantity = document.querySelector(".cart__item__content__settings__delete");
+  alertMessQuantity.insertAdjacentHTML("afterend",
+    `<span id ="messalert" style="text-align: center; background: white; border-radius: 2px; font-size: 16px; color: #28B148;">La quantité doit être en 1 et 100</span>`
+  )
+  timeOut();
+}
+// fonction pour le message si le panier est vide
+function alertBasket() {
+  let alertMessBasket = document.querySelector(".cart__order__form__submit");
+  alertMessBasket.insertAdjacentHTML("afterend",
+    `<p id ="messalert" style="text-align: center; background: white; border-radius: 2px; font-size: 16px; color: #28B148;">Votre panier est vide!</p>`
+  )
+  timeOut();
+}
+// fonction pour message d'erreur si l'api est indisponible
+function alertApiOut() {
+  let alertServer = document.querySelector(".item__content__addButton");
+  alertServer.insertAdjacentHTML("afterend",
+    `<span id ="messalert" style="text-align: center; background: white; border-radius: 2px; font-size: 20px; color: #28B148;">Erreur serveur indisponible, veuillez réessayer plus tard !</span>`
+  )
+}
+
+
 window.onload = () => {
   // Récuperer les données du  Localstorage
   let basket = JSON.parse(localStorage.getItem("basket"));
@@ -329,4 +321,3 @@ window.onload = () => {
     }
   });
 }
-

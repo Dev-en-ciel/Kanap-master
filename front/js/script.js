@@ -5,9 +5,10 @@ fetch("http://localhost:3000/api/products")
     .then(res => res.json())
     .then((productsItems) => {
 
-    // ajouts des Objets sur la page d'accueil 
+    //ajouts des Objets sur la page d'accueil 
     // Utlisation d'une boucle for each pour itérer les données du tableau (répeter la tâche jusqu'au dernier produit) 
         productsItems.forEach((product) => {
+        // suppr innertHtml
             document.querySelector("#items").innerHTML += ` 
                 <a href="./product.html?id=${product._id}">
                 <article>
@@ -18,15 +19,14 @@ fetch("http://localhost:3000/api/products")
                 </a>`;
         })
     })
-        .catch(function (err) {
-        let alertServer = document.querySelector('#items');
-        let pServer = document.createElement("p");
-        alertServer.appendChild(pServer);
-        pServer.textContent = "Erreur serveur indisponible, veuillez réessayer plus tard !";
-        pServer.style.fontSize = "18px"
-        pServer.style.backgroundColor = "white";
-        pServer.style.color = "#28B148";
-        pServer.style.borderRadius = "5px";
-        pServer.style.padding = "8px";
-    })
+    .catch(function (err) {
+        alertApiOut();
+    });
+}
+////////////Gestion de l'alerte///////////
+function alertApiOut() {
+  let alertServer = document.querySelector(".items");
+  alertServer.insertAdjacentHTML("afterbegin",
+    `<span id ="messalert" style="text-align: center; background: white; border-radius: 2px; font-size: 20px; color: #28B148;">Erreur serveur indisponible, veuillez réessayer plus tard !</span>`
+  )
 }
