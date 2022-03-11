@@ -11,22 +11,20 @@ function showProductDetails(productId) {
     .then(product => {
       let image = document.querySelector('.item__img')
       image.innerHTML = `<img src="${product.imageUrl}" alt=${product.altTxt}">`;
-      imageUrl = product.imageUrl;
-      imageAlt = product.altTxt;
       document.getElementById('title').innerHTML = `<h1>${product.name}</h1>`;
       document.getElementById('price').innerHTML = `${product.price}`;
       document.getElementById('description').innerHTML = `${product.description}`;
+      let colors = document.querySelector('#colors');
 
       // Mise en place du choix des couleurs 
       for (number in product.colors) {
-        colors.options[colors.options.length] = new Option(product.colors[number]);
+        colors[colors.options.length] = new Option(product.colors[number]);
       }
     })
     .catch(function (err) {
       alertApiOut();
     });
 }
-
 //  Ajout du produit au panier
 function addCart() {
   let basket = [];
@@ -68,7 +66,7 @@ function addCart() {
 function optionSelect() {
 
   let choiceColor = document.getElementById('colors');
-  let quantity = document.getElementById('quantity');
+  let quantity = (document.getElementById('quantity'));
   if (choiceColor.value === '') {
     errColor();
     timeOut();
@@ -86,19 +84,19 @@ function timeOut() {
   let deletAlert = document.querySelector("#messalert")
   setTimeout(function () {
     deletAlert.remove()
-  }, 2000)
+  }, 2000);
 }
 
 let errColor = () => {
   let alertColor = document.querySelector(".item__content__settings");
   alertColor.insertAdjacentHTML("afterend",
-    `<span id ="messalert" style="text-align: center; background: white; border-radius: 2px; font-size: 20px; color: #28B148;">Veuillez séléctionner une couleur !</span>`
+    `<span id ="messalert" style="text-align: center; background: white; border-radius: 2px; font-size: 20px; color: red;">Veuillez séléctionner une couleur !</span>`
   )
 }
 let errQuantity = () => {
   let alertQuantity = document.querySelector(".item__content__settings");
   alertQuantity.insertAdjacentHTML("afterend",
-    `<span id ="messalert" style="text-align: center; background: white; border-radius: 2px; font-size: 20px; color: #28B148;">Veuillez séléctionner une quantité !</span>`
+    `<span id ="messalert" style="text-align: center; background: white; border-radius: 2px; font-size: 20px; color: red;">Veuillez séléctionner une quantité !</span>`
   )
 }
 let addConfirm = () => {

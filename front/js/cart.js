@@ -7,7 +7,7 @@ function displayItem(basket) {
     <p>Votre panier est vide !</p>`
   } else {
 
-    //Variable utile pour le calcul quantité & prix Total 
+    // //Variable utile pour le calcul quantité & prix Total 
     let totalItems = 0;
     let totalPrice = 0;
 
@@ -18,14 +18,14 @@ function displayItem(basket) {
         .then(res => res.json())
         .then(productApi => {
 
+          // Affichage des élements dans le DOM
+          showITem(product, productApi);
+
           // Calcul de la quantité total des articles
           totalItems += product.quantity;
 
           // Calcul du prix total du panier
           totalPrice += productApi.price * product.quantity;
-
-          // Affichage des élements dans le DOM
-          showITem(product, productApi);
 
           // Affichage de la quantité
           let totalQuantity = document.getElementById("totalQuantity");
@@ -34,10 +34,11 @@ function displayItem(basket) {
           // Affichage du prix total
           let priceTotal = document.getElementById("totalPrice");
           priceTotal.textContent = totalPrice;
+
         })
-      .catch(function (err) {
-        alertApiOut();
-      });
+        .catch(function (err) {
+          alertApiOut();
+        });
     })
   }
 }
@@ -53,6 +54,7 @@ function showITem(product, productApi) {
   article.className = "cart__item";
   article.setAttribute("data-id", product.id);
   article.setAttribute("data-color", product.color);
+  article.setAttribute("data-price", productApi.price);
 
   //Creation et insertion de "div" pour l'image du produit
   let divImg = document.createElement("div");
@@ -63,8 +65,8 @@ function showITem(product, productApi) {
   let img = document.createElement("img");
   divImg.appendChild(img);
   img.src = productApi.imageUrl;
-  img.alt = productApi.imageAlt;
-
+  img.alt = productApi.altTxt;
+  
   //creation et insertion de l'élément "div" description produit
   let itemContent = document.createElement("div");
   article.appendChild(itemContent);
@@ -88,7 +90,7 @@ function showITem(product, productApi) {
   //Creation et insertion du prix
   let price = document.createElement("p");
   itemContentTitlePrice.appendChild(price);
-  price.innerHTML = productApi.price * product.quantity + " €";
+  price.innerHTML = productApi.price + " €";
 
   //Creation et insertion de l'élément "div" pour l'élèment div qui contiendra la quantité
   let itemContentSettings = document.createElement("div");
@@ -137,27 +139,48 @@ function modifyQuantity(event) {
   let changeQuantity = parseInt(event.target.value);//entier
 
   // verifier que la quantite se situe entre 1 et 100  
-  if (changeQuantity == 0) {
+  if (changeQuantity === 0) {
     deleteProduct(event);
     return false;
   }
-  if (changeQuantity <= 0 || changeQuantity >= 100) {
+  if (changeQuantity <= 0 || changeQuantity >= 101) {
     alertquantity();
     return false;
   }
-  
-    let productId = event.target.closest("article").dataset.id;
-    let productColor = event.target.closest("article").dataset.color;
-    for (i = 0; i < basket.length; i++) {
-      if (basket[i].id === productId && basket[i].color === productColor) {
-        basket[i].quantity = changeQuantity;
-        localStorage.setItem("basket", JSON.stringify(basket));
-      }
-    }
-    location.reload();
- 
-}
 
+  let productId = event.target.closest("article").dataset.id;
+  let productColor = event.target.closest("article").dataset.color;
+  for (i = 0; i < basket.length; i++) {
+    if (basket[i].id === productId && basket[i].color === productColor) {
+      basket[i].quantity = changeQuantity;
+      localStorage.setItem("basket", JSON.stringify(basket));
+    }
+  }
+  totalPriceAndQuantity(basket, event.target.closest("article").dataset.price);
+}
+function totalPriceAndQuantity(basket, unitPrice) {
+console.log(unitPrice);
+  //Variable utile pour le calcul quantité & prix Total 
+  let totalItems = 0;
+  let totalPrice = 0;
+
+  basket.forEach(product => {
+
+    // Calcul de la quantité total des articles
+    totalItems += product.quantity;
+
+    // Calcul du prix total du panier
+    totalPrice += unitPrice * product.quantity;
+
+  });
+  // Affichage de la quantité
+  let totalQuantity = document.getElementById("totalQuantity");
+  totalQuantity.textContent = totalItems;
+
+  // Affichage du prix total
+  let priceTotal = document.getElementById("totalPrice");
+  priceTotal.textContent = totalPrice;
+}
 //Mise en place de la suppression de l'article
 function deleteProduct(event) {
   //récuperation du panier
@@ -206,7 +229,7 @@ function validForm() {
   }
   if (!lastAndFirstNameRegExp.test(lastName.value)) {
     lastNameErrorMsg.textContent = "Vérifier ce champ il ne doit pas contenir de chiffre !";
-;
+    ;
     isValidForm = false;
   }
   if (!addressRegExp.test(address.value)) {
@@ -283,7 +306,7 @@ function timeOut() {
 function alertquantity() {
   let alertMessQuantity = document.querySelector(".cart__item__content__settings__delete");
   alertMessQuantity.insertAdjacentHTML("afterend",
-    `<span id ="messalert" style="text-align: center; background: white; border-radius: 2px; font-size: 16px; color: #28B148;">La quantité doit être en 1 et 100</span>`
+    `<span id ="messalert" style="text-align: center; background: white; border-radius: 2px; font-size: 16px; color: red;">La quantité doit être en 1 et 100</span>`
   )
   timeOut();
 }
@@ -291,7 +314,7 @@ function alertquantity() {
 function alertBasket() {
   let alertMessBasket = document.querySelector(".cart__order__form__submit");
   alertMessBasket.insertAdjacentHTML("afterend",
-    `<p id ="messalert" style="text-align: center; background: white; border-radius: 2px; font-size: 16px; color: #28B148;">Votre panier est vide!</p>`
+    `<p id ="messalert" style="text-align: center; background: white; border-radius: 2px; font-size: 16px; color: red;">Votre panier est vide!</p>`
   )
   timeOut();
 }
@@ -299,10 +322,9 @@ function alertBasket() {
 function alertApiOut() {
   let alertServer = document.querySelector(".item__content__addButton");
   alertServer.insertAdjacentHTML("afterend",
-    `<span id ="messalert" style="text-align: center; background: white; border-radius: 2px; font-size: 20px; color: #28B148;">Erreur serveur indisponible, veuillez réessayer plus tard !</span>`
+    `<span id ="messalert" style="text-align: center; background: white; border-radius: 2px; font-size: 20px; color: red;">Erreur serveur indisponible, veuillez réessayer plus tard !</span>`
   )
 }
-
 
 window.onload = () => {
   // Récuperer les données du  Localstorage
