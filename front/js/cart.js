@@ -201,23 +201,24 @@ function validForm() {
 
   let isValidForm = true;
   if (!lastAndFirstNameRegExp.test(firstName.value)) {
-    firstNameErrorMsg.textContent = "erreur";
+    firstNameErrorMsg.textContent = "Vérifier ce champ il ne doit pas contenir de chiffre !";
     isValidForm = false;
   }
   if (!lastAndFirstNameRegExp.test(lastName.value)) {
-    lastNameErrorMsg.textContent = "erreur";
+    lastNameErrorMsg.textContent = "Vérifier ce champ il ne doit pas contenir de chiffre !";
+;
     isValidForm = false;
   }
   if (!addressRegExp.test(address.value)) {
-    addressErrorMsg.textContent = "erreur";
+    addressErrorMsg.textContent = "Vérifier ce champ il comporte des erreurs de saisis !";
     isValidForm = false;
   }
   if (!cityRegExp.test(city.value)) {
-    cityErrorMsg.textContent = "erreur";
+    cityErrorMsg.textContent = "Vérifier ce champ il comporte des erreurs de saisis !";
     isValidForm = false;
   }
   if (!emailRegExp.test(email.value)) {
-    emailErrorMsg.textContent = "erreur";
+    emailErrorMsg.textContent = "Vérifier ce champ l'adresse doit etre de type nom@fai.com !";
     isValidForm = false;
   }
   return isValidForm;
