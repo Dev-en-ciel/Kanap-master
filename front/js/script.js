@@ -5,10 +5,9 @@ fetch("http://localhost:3000/api/products")
     .then(res => res.json())
     .then((productsItems) => {
 
-    //ajouts des Objets sur la page d'accueil 
-    // Utlisation d'une boucle for each pour itérer les données du tableau (répeter la tâche jusqu'au dernier produit) 
+    //ajouts des produits sur la page d'accueil 
+    // Utlisation d'une boucle for each qui parcourt tout les élements (product) de productItem .
         productsItems.forEach((product) => {
-        // suppr innertHtml
             document.querySelector("#items").innerHTML += ` 
                 <a href="./product.html?id=${product._id}">
                 <article>
