@@ -37,7 +37,7 @@ function displayItem(basket) {
 
         })
         .catch(function (err) {
-          alertApiOut();
+          notif("error", "Erreur serveur indisponible, veuillez réessayer plus tard!", document.querySelector(".item"));
         });
     })
   }
@@ -66,7 +66,7 @@ function showITem(product, productApi) {
   divImg.appendChild(img);
   img.src = productApi.imageUrl;
   img.alt = productApi.altTxt;
-  
+
   //creation et insertion de l'élément "div" description produit
   let itemContent = document.createElement("div");
   article.appendChild(itemContent);
@@ -144,7 +144,7 @@ function modifyQuantity(event) {
     return false;
   }
   if (changeQuantity <= 0 || changeQuantity >= 101) {
-    alertquantity();
+    notif("error", "La quantité doit être en 1 et 100", document.querySelector(".cart__item__content__settings__delete"));
     return false;
   }
 
@@ -156,15 +156,17 @@ function modifyQuantity(event) {
       localStorage.setItem("basket", JSON.stringify(basket));
     }
   }
+
   totalPriceAndQuantity(basket, event.target.closest("article").dataset.price);
 }
-function totalPriceAndQuantity(basket, unitPrice) {
-console.log(unitPrice);
+function totalPriceAndQuantity(basket) {
   //Variable utile pour le calcul quantité & prix Total 
   let totalItems = 0;
   let totalPrice = 0;
 
   basket.forEach(product => {
+
+    let unitPrice = document.querySelector("[data-id='" + product.id + "']").dataset.price;
 
     // Calcul de la quantité total des articles
     totalItems += product.quantity;
@@ -173,14 +175,16 @@ console.log(unitPrice);
     totalPrice += unitPrice * product.quantity;
 
   });
+
   // Affichage de la quantité
   let totalQuantity = document.getElementById("totalQuantity");
-  totalQuantity.textContent = totalItems;
 
+  totalQuantity.textContent = totalItems;
   // Affichage du prix total
   let priceTotal = document.getElementById("totalPrice");
   priceTotal.textContent = totalPrice;
 }
+
 //Mise en place de la suppression de l'article
 function deleteProduct(event) {
   //récuperation du panier
@@ -223,13 +227,13 @@ function validForm() {
   let email = document.getElementById("email");
 
   let isValidForm = true;
+
   if (!lastAndFirstNameRegExp.test(firstName.value)) {
     firstNameErrorMsg.textContent = "Vérifier ce champ il ne doit pas contenir de chiffre !";
     isValidForm = false;
   }
   if (!lastAndFirstNameRegExp.test(lastName.value)) {
     lastNameErrorMsg.textContent = "Vérifier ce champ il ne doit pas contenir de chiffre !";
-    ;
     isValidForm = false;
   }
   if (!addressRegExp.test(address.value)) {
@@ -244,6 +248,7 @@ function validForm() {
     emailErrorMsg.textContent = "Vérifier ce champ l'adresse doit etre de type nom@fai.com !";
     isValidForm = false;
   }
+
   return isValidForm;
 }
 
@@ -261,7 +266,7 @@ function sendForm() {
     email: document.querySelector("#email").value
   };
   if (basket === null) {
-    alertBasket();
+    notif("error", "Votre panier est vide!", document.querySelector(".cart__order__form__submit"));
   }
   // Création d'un tableau qui contiendra les Ids des produits choisis
   products = [];
@@ -291,7 +296,7 @@ function sendForm() {
       window.location.href = `confirmation.html?orderId=${data.orderId}`;
     })
     .catch(function (err) {
-      alertApiOut();
+      notif("error", "Erreur serveur indisponible, veuillez réessayer plus tard !", document.querySelector(".item__content__addButton"));
     });
   localStorage.clear();
 }
@@ -302,28 +307,27 @@ function timeOut() {
     deletAlert.remove()
   }, 2000)
 }
+function notif(level, msg, target) {
+  if (level === "success") {
+    colorMsg = "#28B148";
+  } else {
+    colorMsg = 'red';
+  }
 
+  let alertMess = document.createElement('p');
+  alertMess.setAttribute('id', 'messalert');
+  alertMess.setAttribute('style', 'text-align: center; background: white; border-radius: 2px; font-size: 20px; color:' + colorMsg);
+  alertMess.textContent = msg;
+
+  target.insertAdjacentElement("afterend", alertMess);
+  timeOut();
+}
 function alertquantity() {
   let alertMessQuantity = document.querySelector(".cart__item__content__settings__delete");
   alertMessQuantity.insertAdjacentHTML("afterend",
     `<span id ="messalert" style="text-align: center; background: white; border-radius: 2px; font-size: 16px; color: red;">La quantité doit être en 1 et 100</span>`
   )
   timeOut();
-}
-// fonction pour le message si le panier est vide
-function alertBasket() {
-  let alertMessBasket = document.querySelector(".cart__order__form__submit");
-  alertMessBasket.insertAdjacentHTML("afterend",
-    `<p id ="messalert" style="text-align: center; background: white; border-radius: 2px; font-size: 16px; color: red;">Votre panier est vide!</p>`
-  )
-  timeOut();
-}
-// fonction pour message d'erreur si l'api est indisponible
-function alertApiOut() {
-  let alertServer = document.querySelector(".item__content__addButton");
-  alertServer.insertAdjacentHTML("afterend",
-    `<span id ="messalert" style="text-align: center; background: white; border-radius: 2px; font-size: 20px; color: red;">Erreur serveur indisponible, veuillez réessayer plus tard !</span>`
-  )
 }
 
 window.onload = () => {

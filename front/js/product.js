@@ -22,7 +22,7 @@ function showProductDetails(productId) {
       }
     })
     .catch(function (err) {
-      alertApiOut();
+      notif("error", "Erreur serveur indisponible, veuillez réessayer plus tard!", document.querySelector(".item"));
     });
 }
 //  Ajout du produit au panier
@@ -48,8 +48,8 @@ function addCart() {
         basket[i] = product;
         localStorage.setItem('basket', JSON.stringify(basket));
         updated = true;
-        addConfirm();
-        timeOut();
+        notif("success", "Votre produit à bien été ajouté au panier!", document.querySelector(".item__content__settings"));
+
         return true;
       }
     });
@@ -57,8 +57,7 @@ function addCart() {
   if (!updated) {
     basket.push(detailProduct);
     localStorage.setItem('basket', JSON.stringify(basket))
-    addConfirm();
-    timeOut();
+    notif("success", "Votre produit à bien été ajouté au panier!", document.querySelector(".item__content__settings"));
   }
 }
 
@@ -68,13 +67,15 @@ function optionSelect() {
   let choiceColor = document.getElementById('colors');
   let quantity = (document.getElementById('quantity'));
   if (choiceColor.value === '') {
-    errColor();
-    timeOut();
+
+    notif("error", "Veuillez séléctionner une couleur", document.querySelector(".item__content__settings"));
+
     return false;
   }
   if (quantity.value <= 0 || quantity.value > 100) {
-    errQuantity();
-    timeOut();
+
+    notif("error", "Veuillez séléctionner une quantité entre 1 & 100", document.querySelector(".item__content__settings"));
+
     return false;
   }
   return true;
@@ -87,31 +88,20 @@ function timeOut() {
   }, 2000);
 }
 
-let errColor = () => {
-  let alertColor = document.querySelector(".item__content__settings");
-  alertColor.insertAdjacentHTML("afterend",
-    `<span id ="messalert" style="text-align: center; background: white; border-radius: 2px; font-size: 20px; color: red;">Veuillez séléctionner une couleur !</span>`
-  )
-}
-let errQuantity = () => {
-  let alertQuantity = document.querySelector(".item__content__settings");
-  alertQuantity.insertAdjacentHTML("afterend",
-    `<span id ="messalert" style="text-align: center; background: white; border-radius: 2px; font-size: 20px; color: red;">Veuillez séléctionner une quantité !</span>`
-  )
-}
-let addConfirm = () => {
-  let alertQuantity = document.querySelector(".item__content__settings");
-  alertQuantity.insertAdjacentHTML("afterend",
-    `<span id ="messalert" style="text-align: center; background: white; border-radius: 2px; font-size: 20px; color: #28B148;">Votre produit à bien été ajouté au panier!</span>`
-  )
-}
-function alertApiOut() {
-  let alertServer = document.querySelector(".items");
-  alertServer.insertAdjacentHTML("afterbegin",
-    `<span id ="messalert" style="text-align: center; background: white; border-radius: 2px; font-size: 20px; color: #28B148;">Erreur serveur indisponible, veuillez réessayer plus tard !</span>`
-  )
-}
+function notif(level, msg, target) {
+  if (level === "success") {
+    colorMsg = "#28B148";
+  } else {
+    colorMsg = 'red';
+  }
+  let alertMess = document.createElement('p');
+  alertMess.setAttribute('id', 'messalert');
+  alertMess.setAttribute('style', 'text-align: center; background: white; border-radius: 2px; font-size: 20px; color:' + colorMsg);
+  alertMess.textContent = msg;
 
+  target.insertAdjacentElement("afterend", alertMess);
+  timeOut();
+}
 
 window.onload = () => {
 
