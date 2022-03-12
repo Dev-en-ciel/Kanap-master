@@ -16,7 +16,6 @@ function showProductDetails(productId) {
       document.getElementById('description').innerHTML = `${product.description}`;
       let colors = document.querySelector('#colors');
 
-      // Mise en place du choix des couleurs 
       for (number in product.colors) {
         colors[colors.options.length] = new Option(product.colors[number]);
       }
@@ -32,14 +31,12 @@ function addCart() {
   let color = document.querySelector("#colors").value;
   let quantity = document.querySelector('#quantity').value;
 
-  // détail du produit0
   let detailProduct = {
     id: getProductId(),
     color: color,
     quantity: parseInt(quantity),
   };
 
-  // Vérifier que le panier ne contient pas de produit de la meme couleur & de meme quantité
   if (localStorage.getItem('basket')) {
     basket = JSON.parse(localStorage.getItem('basket'));
     basket.forEach((product, i) => {
@@ -84,7 +81,7 @@ function optionSelect() {
 function timeOut() {
   let deletAlert = document.querySelector("#messalert")
   setTimeout(function () {
-    deletAlert.remove()
+    deletAlert.remove();
   }, 2000);
 }
 
