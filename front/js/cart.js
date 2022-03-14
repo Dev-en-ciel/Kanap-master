@@ -12,7 +12,7 @@ function displayItem(basket) {
     const apiUrl = 'http://localhost:3000/api/products/';
     basket.forEach(product => {
       fetch(apiUrl + product.id)
-        .then(res => res.json())
+        .then(res => res.json())  
         .then(productApi => {
 
           showITem(product, productApi);
@@ -190,23 +190,23 @@ function validForm() {
 
   let isValidForm = true;
 
-  if (!lastAndFirstNameRegExp.test(firstName.value)) {
+  if (!lastAndFirstNameRegExp.test(firstName.value.trim())) {
     firstNameErrorMsg.textContent = "Vérifier ce champ il ne doit pas contenir de chiffre !";
     isValidForm = false;
   }
-  if (!lastAndFirstNameRegExp.test(lastName.value)) {
+  if (!lastAndFirstNameRegExp.test(lastName.value.trim())) {
     lastNameErrorMsg.textContent = "Vérifier ce champ il ne doit pas contenir de chiffre !";
     isValidForm = false;
   }
-  if (!addressRegExp.test(address.value)) {
+  if (!addressRegExp.test(address.value.trim())) {
     addressErrorMsg.textContent = "Vérifier ce champ il comporte des erreurs de saisis !";
     isValidForm = false;
   }
-  if (!cityRegExp.test(city.value)) {
+  if (!cityRegExp.test(city.value.trim())) {
     cityErrorMsg.textContent = "Vérifier ce champ il comporte des erreurs de saisis !";
     isValidForm = false;
   }
-  if (!emailRegExp.test(email.value)) {
+  if (!emailRegExp.test(email.value.trim())) {
     emailErrorMsg.textContent = "Vérifier ce champ l'adresse doit etre de type nom@fai.com !";
     isValidForm = false;
   }
